@@ -4,12 +4,15 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import InputField from '../components/InputField';
+import { toast } from 'react-toastify';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const auth = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleEmail = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,10 +26,33 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    auth.login(email, password);
+  const validate = (): boolean => {
+    if (email.trim() === '') {
+      toast.error('Email should no be empty');
+      return false;
+    }
+    if (password.trim() === '') {
+      toast.error('Password should no be empty');
+      return false;
+    }
+    return true;
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validate()) {
+      setEmail('');
+      setPassword('');
+      return;
+    }
+
+    try {
+      await auth.login(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error('Invalid email or password');
+    }
     setEmail('');
     setPassword('');
   };
@@ -76,11 +102,10 @@ const Login = () => {
             sx={{ mt: 4 }}
           />
           <Button
-            type='submit'
+            type="submit"
             variant="contained"
             color="secondary"
             sx={{ mt: 5, marginRight: 'auto' }}
-            onSubmit={handleSubmit}
           >
             Log in
           </Button>

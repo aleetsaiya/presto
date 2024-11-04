@@ -11,6 +11,11 @@ const NavBar = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    auth.logout();
+    navigate('/');
+  };
+
   /** Render this navbar when user haven't logged in */
   const renderBeforeLoginNavbar = () => (
     <Box sx={{ flexGrow: 1 }}>
@@ -54,7 +59,7 @@ const NavBar = () => {
             color="info"
             variant="contained"
             sx={{ ml: 2 }}
-            onClick={() => navigate('signup')}
+            onClick={handleLogout}
           >
             Logout
           </Button>
