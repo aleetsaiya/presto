@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   /** Return true if user have logged in */
   const isLogin = () => {
-    return token !== null
+    return token !== null;
   };
 
   const logout = useCallback(() => {
@@ -56,7 +56,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           email,
           password,
         })
-        .then(() => {
+        .then((res) => {
+          const token = res.data.token;
+          setToken(token);
           return Promise.resolve();
         })
         .catch((err) => {

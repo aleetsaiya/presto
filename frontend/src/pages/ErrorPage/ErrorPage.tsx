@@ -1,7 +1,7 @@
-import { useRouteError } from "react-router-dom";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { isRouteErrorResponse } from "react-router-dom";
+import { useRouteError } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { isRouteErrorResponse } from 'react-router-dom';
 
 const ErrorPage = () => {
   const error = useRouteError();
@@ -9,14 +9,11 @@ const ErrorPage = () => {
 
   if (isRouteErrorResponse(error)) {
     errmsg = `${error.status} ${error.statusText}`;
-  }
-  else if (error instanceof Error) {
+  } else if (error instanceof Error) {
     errmsg = error.message;
-  }
-  else if (typeof error == 'string') {
+  } else if (typeof error == 'string') {
     errmsg = error;
-  }
-  else {
+  } else {
     errmsg = 'Unknown Error';
   }
 
@@ -33,7 +30,7 @@ const ErrorPage = () => {
       <Typography>An unexpected error has occurred.</Typography>
       <Typography>{errmsg}</Typography>
     </Container>
-  )
-}
+  );
+};
 
 export default ErrorPage;

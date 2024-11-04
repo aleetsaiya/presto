@@ -32,7 +32,7 @@ const nord = {
   yellow: '#EBCB8B',
   green: '#A3BE8C',
   purple: '#B48EAD',
-};
+} as const;
 
 type NordPalette = typeof nord;
 

@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import NavBar from '../components/Navbar';
 import { ToastContainer } from 'react-toastify';
 
 const Layout = () => {
@@ -15,9 +14,8 @@ const Layout = () => {
         draggable
         pauseOnHover
         stacked
-        theme='light'
+        theme="light"
       />
-      <NavBar />
       <Outlet />
     </>
   );
