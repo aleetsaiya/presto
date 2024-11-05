@@ -80,6 +80,18 @@ export const theme = createTheme({
         body: {
           color: nord.black[3],
           backgroundColor: nord.white[0],
+          overflow: 'hidden',
+        },
+        '::-webkit-scrollbar': {
+          width: '6px',
+        },
+        '::-webkit-scrollbar-track': {
+          background: nord.white[2],
+        },
+        '::-webkit-scrollbar-thumb': {
+          backgroundColor: nord.blue[2],
+          borderRadius: '10px',
+          border: '3px none #ffffff',
         },
       },
     },

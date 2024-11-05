@@ -20,7 +20,7 @@ const ErrorPage = () => {
   return (
     <Container
       sx={{
-        m: 3,
+        mt: 3,
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',

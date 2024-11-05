@@ -62,7 +62,6 @@ const Login = () => {
       <Container
         maxWidth="sm"
         sx={{
-          margin: 'auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

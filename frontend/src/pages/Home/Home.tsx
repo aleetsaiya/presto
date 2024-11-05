@@ -9,8 +9,6 @@ const Home = () => {
       <Container
         sx={{
           mt: 7,
-          ml: 'auto',
-          mr: 'auto',
         }}
       >
         <Typography variant="h3">Welcome to Presto!</Typography>

@@ -12,10 +12,7 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
   const theme = useTheme();
 
   return (
-    <MuiModal
-      open={open}
-      onClose={onClose}
-    >
+    <MuiModal open={open} onClose={onClose}>
       <Box
         sx={{
           display: 'flex',
@@ -24,6 +21,7 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
           top: '40%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          maxWidth: '90%',
           width: 500,
           boxShadow: 8,
           bgcolor: theme.palette.nord.white[1],
@@ -37,7 +35,7 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
             marginLeft: 'auto',
           }}
         >
-          <CloseIcon fontSize='small' />
+          <CloseIcon fontSize="small" />
         </IconButton>
         <Box
           sx={{
