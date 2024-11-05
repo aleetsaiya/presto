@@ -16,7 +16,12 @@ const Navbar = ({ onClickNewPresentation }: NavbarProps) => {
   };
 
   return (
-    <NavbarContainer theme="dark">
+    <NavbarContainer
+      theme="dark"
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
+    >
       <Button
         color="info"
         variant="contained"
