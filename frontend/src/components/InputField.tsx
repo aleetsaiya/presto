@@ -1,11 +1,10 @@
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
 import { SxProps } from '@mui/system';
+import { OutlinedInput, Input, InputLabel, FormControl } from '@mui/material';
 
 type InputFieldProps = {
   id: string;
-  label: string;
+  outlined?: boolean;
+  label?: string;
   type?: string;
   sx?: SxProps;
   value?: string;
@@ -16,6 +15,7 @@ type InputFieldProps = {
 
 const InputField = ({
   id,
+  outlined = false,
   type,
   label,
   sx,
@@ -24,17 +24,29 @@ const InputField = ({
 }: InputFieldProps) => {
   return (
     <FormControl fullWidth size="small" sx={sx}>
-      <InputLabel size="small" htmlFor={id}>
-        {label}
-      </InputLabel>
-      <Input
-        id={id}
-        size="small"
-        type={type}
-        value={value}
-        onChange={onChange}
-        sx={{ pl: 2 }}
-      ></Input>
+      {!outlined && label && (
+        <InputLabel size="small" htmlFor={id}>
+          {label}
+        </InputLabel>
+      )}
+      {outlined ? (
+        <OutlinedInput
+          id={id}
+          size="small"
+          type={type}
+          value={value}
+          onChange={onChange}
+        />
+      ) : (
+        <Input
+          id={id}
+          size="small"
+          type={type}
+          value={value}
+          onChange={onChange}
+          sx={{ pl: 2 }}
+        ></Input>
+      )}
     </FormControl>
   );
 };

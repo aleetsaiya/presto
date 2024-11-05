@@ -7,8 +7,13 @@ const Navbar = () => {
 
   return (
     <NavbarContainer>
-      <Button onClick={() => navigate('/login')}>Login</Button>
-      <Button sx={{ ml: 2 }} onClick={() => navigate('/signup')}>
+      <Button sx={{ textTransform: 'none' }} onClick={() => navigate('/login')}>
+        Login
+      </Button>
+      <Button
+        sx={{ ml: 2, textTransform: 'none' }}
+        onClick={() => navigate('/signup')}
+      >
         Signup
       </Button>
     </NavbarContainer>

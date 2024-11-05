@@ -61,7 +61,7 @@ export const theme = createTheme({
       main: nord.orange,
     },
     info: {
-      main: nord.blue[3],
+      main: nord.blue[1],
     },
     success: {
       main: nord.green,

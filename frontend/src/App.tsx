@@ -9,9 +9,9 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        <AuthProvider>
-          <RouterProvider router={router}></RouterProvider>
-        </AuthProvider>
+      <AuthProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

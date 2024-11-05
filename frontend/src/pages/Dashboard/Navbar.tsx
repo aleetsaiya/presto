@@ -1,22 +1,34 @@
 import Button from '@mui/material/Button';
 import NavbarContainer from '../../components/Navbar';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { toast } from 'react-toastify';
 
-const Navbar = () => {
-  const navigate = useNavigate();
+type NavbarProps = {
+  onClickNewPresentation: React.MouseEventHandler<HTMLButtonElement>;
+};
+
+const Navbar = ({ onClickNewPresentation }: NavbarProps) => {
   const auth = useAuth();
+
+  const handleLogout = () => {
+    auth.logout();
+    toast.success('You have successfully log out');
+  };
 
   return (
     <NavbarContainer theme="dark">
-      <Button color="inherit" onClick={() => navigate('/dashboard')}>
-        Home
-      </Button>
       <Button
         color="info"
         variant="contained"
-        sx={{ ml: 2 }}
-        onClick={() => auth.logout()}
+        onClick={onClickNewPresentation}
+        sx={{ textTransform: 'none' }}
+      >
+        New presentation
+      </Button>
+      <Button
+        color="inherit"
+        onClick={handleLogout}
+        sx={{ ml: 2, textTransform: 'none' }}
       >
         Logout
       </Button>
