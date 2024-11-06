@@ -14,15 +14,20 @@ import {
 import SlideshowIcon from '@mui/icons-material/SlideshowRounded';
 import { useStore } from '../../hooks/useStore';
 
-type PresentationProps = {
-  onClick: React.MouseEventHandler;
+type SidebarProps = {
+  onClick: (id: string) => void;
 };
 
 const sidebarWidth = 280;
 
-const Sidebar = ({ onClick }: PresentationProps) => {
+const Sidebar = ({ onClick }: SidebarProps) => {
   const theme = useTheme();
   const store = useStore();
+
+  const ids = Object.keys(store.store)
+  // sort id by created time, the newest will be at the top
+  ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt)
+
   return (
     <Drawer
       variant="permanent"
@@ -51,7 +56,7 @@ const Sidebar = ({ onClick }: PresentationProps) => {
           gap: 1,
         }}
       >
-        <Typography variant="h6">All Presentation</Typography>
+        <Typography variant="h6">All Presentations</Typography>
         <Chip label={Object.keys(store.store).length} size="small" />
       </Box>
       <Box
@@ -71,14 +76,14 @@ const Sidebar = ({ onClick }: PresentationProps) => {
         }}
       >
         <List sx={{ p: 0 }}>
-          {Object.keys(store.store).map((id) => {
+          {ids.map((id) => {
             const presentation = store.store[id];
             return (
               <ListItem
                 key={id}
                 disablePadding
                 id={`sb.${id}`}
-                onClick={onClick}
+                onClick={() => onClick(id)}
               >
                 <ListItemButton>
                   <ListItemIcon>

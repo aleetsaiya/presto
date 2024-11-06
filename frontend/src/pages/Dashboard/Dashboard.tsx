@@ -42,9 +42,8 @@ const Dashboard = () => {
     }
   };
 
-  const handleClickSidebarItem: React.MouseEventHandler = (e) => {
-    const id = e.currentTarget.getAttribute('id')?.split('.')[1];
-    if (id !== undefined && cardsRef.current.has(id)) {
+  const handleClickSidebarItem = (id: string) => {
+    if (cardsRef.current.has(id)) {
       cardsRef.current.get(id)?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',

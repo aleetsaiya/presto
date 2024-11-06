@@ -1,16 +1,20 @@
 import { forwardRef } from 'react';
 import { Box, Typography } from '@mui/material';
+import { Presentation as PresentationType } from '../../hooks/useStore';
 
 type PresentationProps = {
-  name: string;
-  image: string;
+  presentation: PresentationType
+  onClick?: (id: string) => void;
 };
 
 const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
-  ({ name, image }, ref) => {
+  ({ presentation, onClick }, ref) => {
+    const image = 'https://picsum.photos/700/350'; // TODO: fix image to thumbnail
     return (
       <Box
+        id={`pre.${presentation.id}`}
         ref={ref}
+        onClick={onClick ? () => onClick(presentation.id) : undefined}
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -38,7 +42,7 @@ const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
         }}
       >
         <Typography variant="h6" component="div">
-          {name}
+          {presentation.name}
         </Typography>
         <Typography
           variant="body1"
@@ -55,11 +59,6 @@ const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
         >
           Lizards are a widespread group of squamate reptiles, with over 6,000
           species, ranging across all continents except Antarctica Lizards are a
-          widespread group of squamate reptiles, with over 6,000 Lizards are a
-          widespread group of squamate reptiles, with over 6,000 Lizards are a
-          widespread group of squamate reptiles, with over 6,000 species,
-          ranging across all continents except Antarctica species, ranging
-          across all continents except Antarctica species, ranging across all
           continents except Antarctica
         </Typography>
         <Typography

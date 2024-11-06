@@ -2,12 +2,38 @@ import { forwardRef } from 'react';
 import { Box } from '@mui/material';
 import Presentation from './Presentation';
 import { useStore } from '../../hooks/useStore';
+import { useNavigate } from 'react-router-dom';
 
 const Presentations = forwardRef<Map<string, HTMLElement>>((_, ref) => {
   const store = useStore();
   const typedRef = ref as React.MutableRefObject<Map<string, HTMLElement>>;
+  const navigate = useNavigate();
+  const ids = Object.keys(store.store);
+  // sort id by created time, the newest will be at the top
+  ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt);
+
+  const handleClick = (id: string) => {
+    navigate(`/presentations/${id}`);
+  };
+
   return (
-    <Box component="main" width="100%" sx={{ mt: 5, p: 2 }}>
+    <Box
+      component="main"
+      width="100%"
+      sx={{
+        mt: 5,
+        pl: 2,
+        pr: 2,
+        pt: {
+          xs: 0,
+          md: 8 
+        },
+        pb: {
+          xs: 0,
+          md: 15,
+        },
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -19,23 +45,20 @@ const Presentations = forwardRef<Map<string, HTMLElement>>((_, ref) => {
           },
         }}
       >
-        {Object.keys(store.store).map((id) => {
+        {ids.map((id) => {
           const presentation = store.store[id];
           return (
             <Presentation
               key={id}
-              name={presentation.name}
+              presentation={presentation}
+              onClick={handleClick}
               ref={(element) => {
                 if (element) {
-                  console.log('before', typedRef?.current);
-                  console.log('set', id, element);
                   typedRef?.current.set(id, element);
-                  console.log('after', typedRef?.current);
                 } else {
                   typedRef?.current.delete(id);
                 }
               }}
-              image={'https://picsum.photos/700/350'} // TODO use thumbnail
             />
           );
         })}

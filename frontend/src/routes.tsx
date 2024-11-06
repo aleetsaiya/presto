@@ -1,11 +1,12 @@
 import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
-import Layout from './pages/Layout/Layout';
+import Layout from './components/Layout';
 import ErrorPage from './pages/ErrorPage/ErrorPage';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
+import Presentation from './pages/Presentation';
 import { StoreProvider } from './hooks/useStore';
 import { useAuth } from './hooks/useAuth';
 
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
         path: '/dashboard',
         element: <ProtectedRoute />,
         children: [{ index: true, element: <Dashboard /> }],
+      },
+      {
+        path: '/presentations/:id',
+        element: <Presentation />
       },
       { path: '*', element: <NotFound /> },
     ],

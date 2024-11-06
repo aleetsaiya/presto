@@ -6,6 +6,7 @@ import {
   useCallback,
 } from 'react';
 import { getStore as getStoreApi, setStore as setStoreApi } from '../api';
+import { toast } from 'react-toastify';
 
 export type Slide = any;
 
@@ -14,7 +15,7 @@ export type Presentation = {
   id: string;
   name: string;
   slides: Array<Slide>;
-  createAt: number,
+  createAt: number;
   thumbnail?: string; // TODO: find a default thumbnail and make it non-optional
   thumbnailType?: 'url' | 'base64';
 };
@@ -42,9 +43,13 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
 
   // Initialize store
   useEffect(() => {
-    getStoreApi().then((res) => {
-      setStore(res.data.store);
-    });
+    getStoreApi()
+      .then((res) => {
+        setStore(res.data.store);
+      })
+      .catch(() => {
+        toast.error('Fail to get data');
+      });
   }, []);
 
   const createPresentation = useCallback(
@@ -55,7 +60,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           id,
           name,
           createAt: Date.now(),
-          slides: []
+          slides: [],
         },
       };
       return setStoreApi(newStore)
