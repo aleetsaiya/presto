@@ -1,20 +1,12 @@
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 import NavbarContainer from '../../components/Navbar';
-import { useAuth } from '../../hooks/useAuth';
-import { toast } from 'react-toastify';
+import LogoutBtn from '../../components/LogoutBtn';
 
 type NavbarProps = {
   onClickNewPresentation: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const Navbar = ({ onClickNewPresentation }: NavbarProps) => {
-  const auth = useAuth();
-
-  const handleLogout = () => {
-    auth.logout();
-    toast.success('You have successfully log out');
-  };
-
   return (
     <NavbarContainer
       theme="dark"
@@ -30,13 +22,7 @@ const Navbar = ({ onClickNewPresentation }: NavbarProps) => {
       >
         New presentation
       </Button>
-      <Button
-        color="inherit"
-        onClick={handleLogout}
-        sx={{ ml: 2, textTransform: 'none' }}
-      >
-        Logout
-      </Button>
+      <LogoutBtn sx={{ ml: 2 }} />
     </NavbarContainer>
   );
 };

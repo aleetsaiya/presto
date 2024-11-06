@@ -6,12 +6,20 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
+import { StoreProvider } from './hooks/useStore';
 import { useAuth } from './hooks/useAuth';
 
 const ProtectedRoute = () => {
   const { isLogin } = useAuth();
 
-  return isLogin() ? <Outlet /> : <Navigate to="/login" />;
+  return isLogin() ? (
+    // Provide store context only after user login
+    <StoreProvider>
+      <Outlet />
+    </StoreProvider>
+  ) : (
+    <Navigate to="/" />
+  );
 };
 
 export const router = createBrowserRouter([
