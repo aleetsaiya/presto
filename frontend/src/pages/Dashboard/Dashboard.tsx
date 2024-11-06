@@ -1,39 +1,20 @@
 import { useRef, useState } from 'react';
 import Navbar from './Navbar';
 import Modal from './Modal';
-import { Box } from '@mui/material';
 import Presentations from './Presentations';
 import Sidebar from './Sidebar';
+import { Box } from '@mui/material';
+import { useStore } from '../../hooks/useStore';
+import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [newPresentationValue, setNewPresentationValue] = useState('');
-  const [presentations, setPresentations] = useState<Array<string>>([
-    'slide_1',
-    'slide_2',
-    'slide_3',
-    'slide_4',
-    'slide_5',
-    'slide_6',
-    'slide_7',
-    'slide_8',
-    'slide_9',
-    'slide_10',
-    'slide_11',
-    'slide_12',
-    'slide_13',
-    'slide_14',
-    'slide_15',
-    'slide_16',
-    'slide_17',
-    'slide_18',
-    'slide_19',
-    'slide_20',
-  ]); // TODO
-
+  const [newPresentationName, setNewPresentationName] = useState('');
+  const store = useStore();
   const cardsRef = useRef(new Map<string, HTMLElement>());
 
-  const onClickNewPresentation: React.MouseEventHandler<
+  const handleClickNewPresentation: React.MouseEventHandler<
     HTMLButtonElement
   > = () => {
     setOpenModal(true);
@@ -43,22 +24,27 @@ const Dashboard = () => {
     setOpenModal(false);
   };
 
-  const handleChangePresentationValue = (
+  const handleChangePresentationName = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setNewPresentationValue(e.target.value);
+    setNewPresentationName(e.target.value);
   };
 
-  const handleClickCreateBtn = (e: React.FormEvent) => {
+  const handleClickCreateBtn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: send api to create new presentation
-    setOpenModal(false);
-    setNewPresentationValue('');
+    try {
+      const id = uuidv4();
+      await store.createPresentation(id, newPresentationName);
+      setOpenModal(false);
+      setNewPresentationName('');
+    } catch (err) {
+      toast.error('Fail to create new presentation.');
+    }
   };
 
   const handleClickSidebarItem: React.MouseEventHandler = (e) => {
-    const id = e.currentTarget.getAttribute('id')?.split('-')[1];
-    if (id) {
+    const id = e.currentTarget.getAttribute('id')?.split('.')[1];
+    if (id !== undefined && cardsRef.current.has(id)) {
       cardsRef.current.get(id)?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
@@ -76,11 +62,11 @@ const Dashboard = () => {
         }, */
       }}
     >
-      <Navbar onClickNewPresentation={onClickNewPresentation} />
+      <Navbar onClickNewPresentation={handleClickNewPresentation} />
       <Modal
         open={openModal}
-        value={newPresentationValue}
-        onChange={handleChangePresentationValue}
+        value={newPresentationName}
+        onChange={handleChangePresentationName}
         onClick={handleClickCreateBtn}
         onClose={handleCloseModal}
       />
@@ -89,8 +75,8 @@ const Dashboard = () => {
           display: 'flex',
         }}
       >
-        <Sidebar items={presentations} onClick={handleClickSidebarItem} />
-        <Presentations presentations={presentations} ref={cardsRef} />
+        <Sidebar onClick={handleClickSidebarItem} />
+        <Presentations ref={cardsRef} />
       </Box>
     </Box>
   );

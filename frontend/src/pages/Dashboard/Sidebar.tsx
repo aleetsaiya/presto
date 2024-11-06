@@ -4,20 +4,25 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemIcon,
   ListItemButton,
   Toolbar,
   useTheme,
+  Typography,
+  Chip,
 } from '@mui/material';
+import SlideshowIcon from '@mui/icons-material/SlideshowRounded';
+import { useStore } from '../../hooks/useStore';
 
 type PresentationProps = {
-  items: Array<string>;
   onClick: React.MouseEventHandler;
 };
 
-const sidebarWidth = 300;
+const sidebarWidth = 280;
 
-const Sidebar = ({ items, onClick }: PresentationProps) => {
+const Sidebar = ({ onClick }: PresentationProps) => {
   const theme = useTheme();
+  const store = useStore();
   return (
     <Drawer
       variant="permanent"
@@ -38,6 +43,19 @@ const Sidebar = ({ items, onClick }: PresentationProps) => {
       <Toolbar />
       <Box
         sx={{
+          mt: 3,
+          mb: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+        }}
+      >
+        <Typography variant="h6">All Presentation</Typography>
+        <Chip label={Object.keys(store.store).length} size="small" />
+      </Box>
+      <Box
+        sx={{
           overflow: 'auto',
           '::-webkit-scrollbar': {
             width: '6px',
@@ -53,16 +71,20 @@ const Sidebar = ({ items, onClick }: PresentationProps) => {
         }}
       >
         <List sx={{ p: 0 }}>
-          {items.map((item) => {
+          {Object.keys(store.store).map((id) => {
+            const presentation = store.store[id];
             return (
               <ListItem
-                key={item}
+                key={id}
                 disablePadding
-                id={`sb-${item}`}
+                id={`sb.${id}`}
                 onClick={onClick}
               >
                 <ListItemButton>
-                  <ListItemText primary={item} />
+                  <ListItemIcon>
+                    <SlideshowIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={presentation.name} />
                 </ListItemButton>
               </ListItem>
             );

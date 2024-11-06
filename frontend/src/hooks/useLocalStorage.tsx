@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCallback } from 'react';
 
 type UseLocalStorageReturn = [any, (value: any) => void];
 
@@ -25,13 +26,13 @@ export function useLocalStorage(
   });
 
   /** Update localStorage and state value */
-  const updateValue = (value: any) => {
+  const updateValue = useCallback((value: any) => {
     if (typeof value === 'function') {
       throw new Error('Can not store function into local storage');
     }
     localStorage.setItem(key, JSON.stringify(value));
     setValue(value);
-  };
+  }, [key]);
 
   return [value, updateValue];
 }

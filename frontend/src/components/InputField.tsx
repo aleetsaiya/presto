@@ -36,6 +36,7 @@ const InputField = ({
           type={type}
           value={value}
           onChange={onChange}
+          autoComplete={type === 'password' ? 'current-password' : 'on'}
         />
       ) : (
         <Input
@@ -45,6 +46,7 @@ const InputField = ({
           value={value}
           onChange={onChange}
           sx={{ pl: 2 }}
+          autoComplete={type === 'password' ? 'current-password' : 'on'}
         ></Input>
       )}
     </FormControl>

@@ -1,12 +1,16 @@
 import { useContext, createContext, useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { req } from '../api';
+import {
+  login as loginApi,
+  signup as signupApi,
+  logout as logoutApi,
+} from '../api';
 
 type AuthContextType = {
   token: string | null;
   setToken: (token: string) => void;
   isLogin: () => boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
 };
@@ -21,51 +25,47 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useLocalStorage('token', null);
 
   /** Return true if user have logged in */
-  const isLogin = () => {
+  const isLogin = useCallback(() => {
     return token !== null;
-  };
+  }, [token]);
 
-  const logout = useCallback(() => {
-    setToken(null);
+  const logout = useCallback(async () => {
+    return logoutApi()
+      .then(() => {
+        setToken(null);
+        return Promise.resolve();
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
   }, [setToken]);
 
   const login = useCallback(
     async (email: string, password: string): Promise<void> => {
-      return req
-        .post('/admin/auth/login', {
-          email,
-          password,
-        })
+      return loginApi(email, password)
         .then((res) => {
-          const token = res.data.token;
-          setToken(token);
+          setToken(res.data.token);
           return Promise.resolve();
         })
         .catch((err) => {
           return Promise.reject(err);
         });
     },
-    [setToken, token]
+    [setToken]
   );
 
   const signup = useCallback(
     async (name: string, email: string, password: string): Promise<void> => {
-      return req
-        .post('/admin/auth/register', {
-          name,
-          email,
-          password,
-        })
+      return signupApi(name, email, password)
         .then((res) => {
-          const token = res.data.token;
-          setToken(token);
+          setToken(res.data.token);
           return Promise.resolve();
         })
         .catch((err) => {
           return Promise.reject(err);
         });
     },
-    []
+    [setToken]
   );
 
   const value = useMemo(
