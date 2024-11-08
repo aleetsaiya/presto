@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import Navbar from './Navbar';
-import Modal from './Modal';
+import NewPresentationModal from './NewPresentationModal';
 import Presentations from './Presentations';
 import Sidebar from './Sidebar';
 import { Box } from '@mui/material';
@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 const Dashboard = () => {
   const [openModal, setOpenModal] = useState(false);
   const [newPresentationName, setNewPresentationName] = useState('');
+  /** Which presentation (id) should show animation */
+  const [presentationAnimation, setPresentationAnimation] = useState('');
   const store = useStore();
   const cardsRef = useRef(new Map<string, HTMLElement>());
 
@@ -36,33 +38,52 @@ const Dashboard = () => {
       const id = uuidv4();
       await store.createPresentation(id, newPresentationName);
       setOpenModal(false);
+      toast.success('Creates a new presentation successfully');
       setNewPresentationName('');
     } catch (err) {
       toast.error('Fail to create new presentation.');
     }
   };
 
+  /**
+         Return true whenever element center position is in viewport center
+                             Viewport
+         ------------------------------------------------
+         |              False (1/4 height)              |
+         ------------------------------------------------
+         |              True (1/2 height)               | 
+         ------------------------------------------------
+         |              False (1/4 height)              |
+         ------------------------------------------------
+  */
+  const isInCenterViewPort = (element: HTMLElement) => {
+    const topThreshold = window.innerHeight * 0.25;
+    const bottomThreshold = window.innerHeight * 0.75;
+    const positionContext = element.getBoundingClientRect();
+    const centerPoint = (positionContext.top + positionContext.bottom) / 2;
+    return centerPoint >= topThreshold && centerPoint < bottomThreshold;
+  };
+
   const handleClickSidebarItem = (id: string) => {
     if (cardsRef.current.has(id)) {
-      cardsRef.current.get(id)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+      const element = cardsRef.current.get(id);
+      if (!element) return;
+      // If the element is not in the center of the viewport, scroll to element position
+      // else show animation to highlight the element
+      if (!isInCenterViewPort(element)) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      } else {
+        setPresentationAnimation(id);
+      }
     }
   };
 
   return (
-    <Box
-      sx={{
-        overflow: 'auto',
-        maxHeight: '100vh',
-        /* '&::-webkit-scrollbar': {
-          display: 'none',
-        }, */
-      }}
-    >
-      <Navbar onClickNewPresentation={handleClickNewPresentation} />
-      <Modal
+    <>
+      <NewPresentationModal
         open={openModal}
         value={newPresentationName}
         onChange={handleChangePresentationName}
@@ -71,13 +92,27 @@ const Dashboard = () => {
       />
       <Box
         sx={{
-          display: 'flex',
+          overflow: 'auto',
+          maxHeight: '100vh',
         }}
       >
-        <Sidebar onClick={handleClickSidebarItem} />
-        <Presentations ref={cardsRef} />
+        <Navbar onClickNewPresentation={handleClickNewPresentation} />
+        <Box
+          sx={{
+            display: 'flex',
+          }}
+        >
+          <Sidebar onClick={handleClickSidebarItem} />
+          <Presentations
+            presentationAnimation={presentationAnimation}
+            setPresentationAnimation={(id: string) =>
+              setPresentationAnimation(id)
+            }
+            ref={cardsRef}
+          />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

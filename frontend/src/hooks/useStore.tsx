@@ -26,6 +26,7 @@ export type Store = {
 
 type StoreContextType = {
   store: Store;
+  isLoading: boolean;
   createPresentation: (id: string, name: string) => Promise<void>;
   deletePresentation: (id: string) => Promise<void>;
   updatePresentation: (id: string, presentation: Presentation) => Promise<void>;
@@ -40,12 +41,15 @@ type StoreProviderProps = {
 
 export const StoreProvider = ({ children }: StoreProviderProps) => {
   const [store, setStore] = useState<Store>({});
+  /** isLoading will be true when haven't finish fetching data from backend */
+  const [isLoading, setIsLoading] = useState(true);
 
   // Initialize store
   useEffect(() => {
     getStoreApi()
       .then((res) => {
         setStore(res.data.store);
+        setIsLoading(false);
       })
       .catch(() => {
         toast.error('Fail to get data');
@@ -117,6 +121,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     <StoreContext.Provider
       value={{
         store,
+        isLoading,
         createPresentation,
         deletePresentation,
         updatePresentation,

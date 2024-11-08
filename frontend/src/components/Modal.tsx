@@ -1,4 +1,10 @@
-import { Box, IconButton, Modal as MuiModal } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Modal as MuiModal,
+  SxProps,
+  Theme,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material';
 
@@ -6,9 +12,17 @@ type ModalProps = {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  contentContainerStyle?: SxProps<Theme>;
+  modalContainerStyle?: SxProps<Theme>;
 };
 
-const Modal = ({ open, onClose, children }: ModalProps) => {
+const Modal = ({
+  open,
+  onClose,
+  children,
+  modalContainerStyle,
+  contentContainerStyle,
+}: ModalProps) => {
   const theme = useTheme();
 
   return (
@@ -22,10 +36,10 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           maxWidth: '90%',
-          width: 500,
           boxShadow: 8,
           bgcolor: theme.palette.nord.white[1],
           p: 2,
+          ...modalContainerStyle
         }}
       >
         <IconButton
@@ -42,6 +56,7 @@ const Modal = ({ open, onClose, children }: ModalProps) => {
             pl: 3,
             pr: 3,
             pb: 3,
+            ...contentContainerStyle,
           }}
         >
           {children}

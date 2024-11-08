@@ -81,6 +81,7 @@ export const theme = createTheme({
           color: nord.black[3],
           backgroundColor: nord.white[0],
           overflow: 'hidden',
+          height: '100%',
         },
         '::-webkit-scrollbar': {
           width: '6px',
