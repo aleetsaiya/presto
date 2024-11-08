@@ -58,7 +58,10 @@ const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
           flexDirection: 'column',
           justifyContent: 'end',
           aspectRatio: '2/1',
-          maxWidth: 750,
+          maxWidth: {
+            lg: 750,
+            xl: 850,
+          },
           width: '100%',
           background: `${background}`,
           backgroundSize: '100%',
@@ -120,7 +123,7 @@ const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
             marginLeft: 'auto',
           }}
         >
-          pages: 20
+          slides: {presentation?.slides.length || 0}
         </Typography>
       </Paper>
     );

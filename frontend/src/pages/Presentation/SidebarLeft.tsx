@@ -1,20 +1,30 @@
 import { useState } from 'react';
-import { Drawer, Box, Toolbar, Typography, Chip, Button } from '@mui/material';
+import {
+  Drawer,
+  Box,
+  Toolbar,
+  Typography,
+  Chip,
+  IconButton,
+} from '@mui/material';
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import EditPresentationTitleModal from './EditPresentationTitleModal';
 
-type SidebarProps = {
+type SidebarLeftProps = {
   width: number;
 };
 
-const Sidebar = ({ width }: SidebarProps) => {
+const SideLeft = ({ width }: SidebarLeftProps) => {
   const store = useStore();
   const param = useParams();
   const id = param.id as string;
-  const [editTitle, setEditTitle] = useState(store.store[id]?.name || '');
+  const presentation = store.store[id];
+  const [editTitle, setEditTitle] = useState(presentation?.name || '');
   const [showEditTitleModal, setShowEditTitleModal] = useState(false);
+  const paddingHorizontal = 3;
 
   /**************************************
             Presentation Title
@@ -35,9 +45,10 @@ const Sidebar = ({ width }: SidebarProps) => {
 
   const handleEditTitle = async () => {
     try {
-      const newPresentation = { ...store.store[id] };
+      const newPresentation = { ...presentation };
       newPresentation.name = editTitle;
       await store.updatePresentation(id, newPresentation);
+      setShowEditTitleModal(false);
     } catch (err) {
       toast.error('Fail to edit presentation title');
     }
@@ -67,7 +78,7 @@ const Sidebar = ({ width }: SidebarProps) => {
     const file = e.target?.files[0];
     try {
       const base64File = await fileToBase64(file);
-      const newPresentation = { ...store.store[id] };
+      const newPresentation = { ...presentation };
       newPresentation.thumbnail = base64File;
       newPresentation.thumbnailType = 'base64';
       await store.updatePresentation(id, newPresentation);
@@ -112,45 +123,60 @@ const Sidebar = ({ width }: SidebarProps) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            pl: 3,
-            pr: 3,
-            gap: 1,
+            px: { paddingHorizontal },
+            gap: 0.5,
           }}
         >
           <Typography variant="h6" textAlign="center">
-            {store.store[id]?.name || ''}
+            {presentation?.name || ''}
           </Typography>
-          <Chip label="edit" size="small" onClick={handleShowEditTitleModal} />
+          <IconButton size="small" onClick={handleShowEditTitleModal}>
+            <ModeEditIcon fontSize="small" color="secondary" />
+          </IconButton>
         </Box>
         <Box
           sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 2,
             overflow: 'auto',
+            px: paddingHorizontal,
             marginBottom: 4,
           }}
         >
-          <Box
-            sx={{
-              mb: 3,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1,
-            }}
-          >
-            <Button variant="contained" component="label" color="primary">
-              Upload Thumbnail
-              <input
-                type="file"
-                hidden
-                onChange={handleFileUpload}
-                accept="image/jpg, image/jpeg, image/png"
-              />
-            </Button>
-          </Box>
+          {presentation?.thumbnail ? (
+            <Box
+              component="img"
+              src={presentation.thumbnail}
+              alt="presentation-thumbnail"
+              sx={{
+                width: '100%',
+                borderRadius: 2,
+              }}
+            />
+          ) : (
+            <Box>No Thumbnail</Box>
+          )}
+          <Chip
+            label="update thumbnail"
+            variant="outlined"
+            size="small"
+            component="label"
+            htmlFor="update-thumbnail"
+            onClick={() => { }}
+          />
+          <input
+            id="update-thumbnail"
+            type="file"
+            hidden
+            onChange={handleFileUpload}
+            accept="image/jpg, image/jpeg, image/png"
+          />
         </Box>
       </Drawer>
     </>
   );
 };
 
-export default Sidebar;
+export default SideLeft;

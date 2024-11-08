@@ -1,19 +1,21 @@
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Box, Paper } from '@mui/material';
-import Navbar from './Navbar';
-import DeletePresentationModal from './DeletePresentationModal';
-import Sidebar from './Sidebar';
 import { useStore } from '../../hooks/useStore';
 import { toast } from 'react-toastify';
+import Navbar from './Navbar';
+import DeletePresentationModal from './DeletePresentationModal';
+import SideLeft from './SidebarLeft';
+import SidebarRight from './SidebarRight';
 
 const Presentation = () => {
   const params = useParams();
   const id = params.id as string;
+
   const [openModal, setOpenModal] = useState(false);
+  const [slideIndex, setSlideIndex] = useState(0);
   const navigate = useNavigate();
   const store = useStore();
-  const sidebarWidth = 280;
 
   const handleDeletePresentation = async () => {
     if (!id) {
@@ -35,6 +37,14 @@ const Presentation = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  const handleClickNextSlide = () => {
+    setSlideIndex((idx) => idx + 1);
+  };
+
+  const handleClickPrevSlide = () => {
+    setSlideIndex((idx) => idx - 1);
   };
 
   if (!store.isLoading && !Object.keys(store.store).includes(id)) {
@@ -65,8 +75,10 @@ const Presentation = () => {
             flex: '1 1 auto',
           }}
         >
-          <Sidebar width={sidebarWidth} />
+          <SideLeft width={280} />
+          {/* Main Area */}
           <Box
+            component="main"
             sx={{
               flex: '1 1 auto',
               position: 'relative',
@@ -76,15 +88,24 @@ const Presentation = () => {
               sx={{
                 position: 'absolute',
                 top: '50%',
-                left: '50%',
+                left: {
+                  xs: '50%',
+                  md: 0,
+                },
                 width: '95%',
                 height: '95%',
-                transform: 'translate(-50%, -50%)'
+                transform: {
+                  xs: 'translate(-50%, -50%)',
+                  md: 'translateY(-50%)',
+                },
               }}
               elevation={4}
-            >
-              Inside Paper
-            </Paper>
+            ></Paper>
+            <SidebarRight
+              slideIndex={slideIndex}
+              onClickPrevSlide={handleClickPrevSlide}
+              onClickNextSlide={handleClickNextSlide}
+            />
           </Box>
         </Box>
       </Box>
