@@ -7,8 +7,11 @@ import {
 } from 'react';
 import { getStore as getStoreApi, setStore as setStoreApi } from '../api';
 import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
-export type Slide = any;
+export type Slide = {
+  id: string;
+};
 
 // TODO: Presentation have description?
 export type Presentation = {
@@ -30,6 +33,7 @@ type StoreContextType = {
   createPresentation: (id: string, name: string) => Promise<void>;
   deletePresentation: (id: string) => Promise<void>;
   updatePresentation: (id: string, presentation: Presentation) => Promise<void>;
+  createSlide: (presentationId: string) => Promise<void>;
   clearLocalStore: () => void;
 };
 
@@ -64,7 +68,11 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           id,
           name,
           createAt: Date.now(),
-          slides: [],
+          slides: [
+            {
+              id: uuidv4(),
+            },
+          ],
         },
       };
       return setStoreApi(newStore)
@@ -113,6 +121,29 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     [store]
   );
 
+  const createSlide = useCallback(
+    async (presentationId: string) => {
+      const newStore = {
+        ...store,
+        [presentationId]: {
+          ...store[presentationId],
+          slides: [...store[presentationId].slides, { id: uuidv4() }],
+        },
+      };
+
+      console.log('newStore', newStore);
+      return setStoreApi(newStore)
+        .then(() => {
+          setStore(newStore);
+          return Promise.resolve();
+        })
+        .catch(() => {
+          return Promise.reject();
+        });
+    },
+    [store]
+  );
+
   const clearLocalStore = useCallback(async () => {
     setStore({});
   }, []);
@@ -125,6 +156,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         createPresentation,
         deletePresentation,
         updatePresentation,
+        createSlide,
         clearLocalStore,
       }}
     >
