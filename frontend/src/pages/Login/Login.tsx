@@ -48,7 +48,6 @@ const Login = () => {
     }
     try {
       await auth.login(email, password);
-      console.log('prepare to navigate');
       navigate('/dashboard');
     } catch (err) {
       toast.error('Invalid email or password');

@@ -1,8 +1,8 @@
-import ModalContainer from '../../components/Modal';
+import Modal from '../../components/Modal';
 import { Typography, Button } from '@mui/material';
 import InputField from '../../components/InputField';
 
-type ModalProps = {
+type NewPresentationModalProps = {
   open: boolean;
   value: string;
   onChange: (
@@ -12,9 +12,21 @@ type ModalProps = {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const Modal = ({ open, value, onClose, onChange, onClick }: ModalProps) => {
+const NewPresentationModal = ({
+  open,
+  value,
+  onClose,
+  onChange,
+  onClick,
+}: NewPresentationModalProps) => {
   return (
-    <ModalContainer open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      modalContainerStyle={{
+        width: 400,
+      }}
+    >
       <Typography variant="h6" mb={2}>
         Create new presentation
       </Typography>
@@ -32,8 +44,8 @@ const Modal = ({ open, value, onClose, onChange, onClick }: ModalProps) => {
       >
         Create
       </Button>
-    </ModalContainer>
+    </Modal>
   );
 };
 
-export default Modal;
+export default NewPresentationModal;

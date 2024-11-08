@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   ListItemButton,
   Toolbar,
-  useTheme,
   Typography,
   Chip,
 } from '@mui/material';
@@ -21,12 +20,11 @@ type SidebarProps = {
 const sidebarWidth = 280;
 
 const Sidebar = ({ onClick }: SidebarProps) => {
-  const theme = useTheme();
   const store = useStore();
 
-  const ids = Object.keys(store.store)
+  const ids = Object.keys(store.store);
   // sort id by created time, the newest will be at the top
-  ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt)
+  ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt);
 
   return (
     <Drawer
@@ -62,17 +60,6 @@ const Sidebar = ({ onClick }: SidebarProps) => {
       <Box
         sx={{
           overflow: 'auto',
-          '::-webkit-scrollbar': {
-            width: '6px',
-          },
-          '::-webkit-scrollbar-track': {
-            background: theme.palette.nord.white[2],
-          },
-          '::-webkit-scrollbar-thumb': {
-            backgroundColor: theme.palette.nord.blue[2],
-            borderRadius: '10px',
-            border: '3px none #ffffff',
-          },
         }}
       >
         <List sx={{ p: 0 }}>

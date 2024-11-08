@@ -20,7 +20,7 @@ const Navbar = ({ onClickNewPresentation }: NavbarProps) => {
         onClick={onClickNewPresentation}
         sx={{ textTransform: 'none' }}
       >
-        New presentation
+        New Presentation
       </Button>
       <LogoutBtn sx={{ ml: 2 }} />
     </NavbarContainer>
