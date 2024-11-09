@@ -8,40 +8,14 @@ import {
 import { getStore as getStoreApi, setStore as setStoreApi } from '../api';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-
-export type Slide = {
-  id: string;
-};
-
-// TODO: Presentation have description?
-export type Presentation = {
-  id: string;
-  name: string;
-  slides: Array<Slide>;
-  createAt: number;
-  thumbnail?: string; // TODO: find a default thumbnail and make it non-optional
-  thumbnailType?: 'url' | 'base64';
-};
-
-export type Store = {
-  [uid: string]: Presentation;
-};
-
-type StoreContextType = {
-  store: Store;
-  isLoading: boolean;
-  createPresentation: (id: string, name: string) => Promise<void>;
-  deletePresentation: (id: string) => Promise<void>;
-  updatePresentation: (id: string, presentation: Presentation) => Promise<void>;
-  createSlide: (presentationId: string) => Promise<void>;
-  clearLocalStore: () => void;
-};
+import {
+  StoreContextType,
+  Store,
+  Presentation,
+  StoreProviderProps,
+} from './useStore.types';
 
 const StoreContext = createContext<StoreContextType>({} as StoreContextType);
-
-type StoreProviderProps = {
-  children: React.ReactNode;
-};
 
 export const StoreProvider = ({ children }: StoreProviderProps) => {
   const [store, setStore] = useState<Store>({});
@@ -61,16 +35,18 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   }, []);
 
   const createPresentation = useCallback(
-    async (id: string, name: string) => {
+    async (id: string, name: string, description: string) => {
       const newStore = {
         ...store,
         [id]: {
           id,
           name,
+          description,
           createAt: Date.now(),
           slides: [
             {
               id: uuidv4(),
+              elements: [],
             },
           ],
         },
@@ -127,11 +103,12 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         ...store,
         [presentationId]: {
           ...store[presentationId],
-          slides: [...store[presentationId].slides, { id: uuidv4() }],
+          slides: [
+            ...store[presentationId].slides,
+            { id: uuidv4(), elements: [] },
+          ],
         },
       };
-
-      console.log('newStore', newStore);
       return setStoreApi(newStore)
         .then(() => {
           setStore(newStore);
@@ -143,6 +120,102 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     },
     [store]
   );
+
+  const deleteSlide = useCallback(
+    async (presentationId: string, slideIndex: number) => {
+      const newStore = {
+        ...store,
+        [presentationId]: {
+          ...store[presentationId],
+          slides: store[presentationId].slides.filter(
+            (_, index) => index != slideIndex
+          ),
+        },
+      };
+      return setStoreApi(newStore)
+        .then(() => {
+          setStore(newStore);
+          return Promise.resolve();
+        })
+        .catch(() => {
+          return Promise.reject();
+        });
+    },
+    [store]
+  );
+
+  const createSlideElement: StoreContextType['createSlideElement'] =
+    useCallback(
+      async (presentationId, slideId, element) => {
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) return Promise.reject();
+        const newElement = {
+          id: uuidv4(),
+          x: 0,
+          y: 0,
+          ...element,
+        };
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+          newElement,
+        ];
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          });
+      },
+      [store]
+    );
+
+  const deleteSlideElement: StoreContextType['deleteSlideElement'] =
+    useCallback(
+      (presentationId: string, slideId: string) => {
+        return Promise.resolve();
+      },
+      [store]
+    );
+
+  const updateSlideElement: StoreContextType['updateSlideElement'] =
+    useCallback(
+      async (presentationId, slideId, elementId, element) => {
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) return Promise.reject();
+
+        const elementIndex = store[presentationId].slides[
+          slideIndex
+        ].elements.findIndex((ele) => ele.id === elementId);
+        if (elementIndex === -1) return Promise.reject();
+
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+        ];
+        newSlideElements[elementIndex] = element;
+
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          });
+      },
+      [store]
+    );
 
   const clearLocalStore = useCallback(async () => {
     setStore({});
@@ -157,6 +230,10 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         deletePresentation,
         updatePresentation,
         createSlide,
+        deleteSlide,
+        createSlideElement,
+        deleteSlideElement,
+        updateSlideElement,
         clearLocalStore,
       }}
     >
