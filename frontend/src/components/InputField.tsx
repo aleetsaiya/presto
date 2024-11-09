@@ -4,7 +4,7 @@ import { Input, InputLabel, FormControl, TextField } from '@mui/material';
 type InputFieldProps = {
   id: string;
   outlined?: boolean;
-  label?: string;
+  label?: React.ReactNode;
   type?: string;
   sx?: SxProps;
   value?: string;

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Box, Typography, Paper, useTheme } from '@mui/material';
 import SlideControlbar from './SlideControlbar';
 import { useStore } from '../../hooks/useStore';
@@ -14,6 +15,8 @@ type SlideAreaProps = {
   ) => void;
 };
 
+let counterTimeoutId: number;
+
 const SlideArea = ({
   slideIndex,
   setSlideIndex,
@@ -22,6 +25,7 @@ const SlideArea = ({
   const params = useParams();
   const id = params.id as string;
   const store = useStore();
+  const [clickCounter, setClickCounter] = useState(0);
   const presentation = store.store[id];
   const slides = presentation?.slides;
   const theme = useTheme();
@@ -30,8 +34,17 @@ const SlideArea = ({
     type: SlideElementsWithoutBase['elementType'],
     elementId: string
   ) => {
-    if (type === 'text') {
-      handleTextElementModal('edit', elementId);
+    if (clickCounter >= 1) {
+      if (type === 'text') {
+        clearTimeout(counterTimeoutId);
+        handleTextElementModal('edit', elementId);
+      }
+      setClickCounter(0);
+    } else {
+      setClickCounter((clickCounter) => clickCounter + 1);
+      counterTimeoutId = setTimeout(() => {
+        setClickCounter(0);
+      }, 500);
     }
   };
 
@@ -103,6 +116,7 @@ const SlideArea = ({
               height: '100%',
               transition: 'all 0.3s',
               transform: `translateX(-${slideIndex * 100}%)`,
+              overflow: 'hidden',
             }}
           >
             {slides &&

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
 import InputField from '../../components/InputField';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Button, Box, useTheme } from '@mui/material';
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -19,6 +19,7 @@ const TextElementModal = ({
   onClose,
   elementId,
 }: TextElementModalProps) => {
+  const theme = useTheme();
   const store = useStore();
   const params = useParams();
   const id = params.id as string;
@@ -203,14 +204,14 @@ const TextElementModal = ({
           }}
         >
           <InputField
-            id="text-element-width"
+            id="text-element-x"
             value={x}
             label="X coordinate (%)"
             onChange={handleChangeX}
             autoComplete="off"
           />
           <InputField
-            id="text-element-height"
+            id="text-element-y"
             value={y}
             label="Y coordinate (%)"
             onChange={handleChangeY}
@@ -262,9 +263,28 @@ const TextElementModal = ({
         }}
       />
       <InputField
-        id="text-element-fontSize"
+        id="text-element-color"
         value={color}
-        label="Colour (hex)"
+        label={
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              gap: 2,
+            }}
+          >
+            <Box>Colour (hex)</Box>
+            <Box
+              sx={{
+                aspectRatio: '1/1',
+                width: '12px',
+                backgroundColor: color,
+                border: `solid 1px ${theme.palette.nord.white[3]}`,
+              }}
+            ></Box>
+          </Box>
+        }
         onChange={handleChangeColor}
         autoComplete="off"
         sx={{
