@@ -1,0 +1,143 @@
+import { Box, Typography, Paper, useTheme } from '@mui/material';
+import SlideControlbar from './SlideControlbar';
+import { useStore } from '../../hooks/useStore';
+import { useParams } from 'react-router-dom';
+import { Slide, SlideElementsWithoutBase } from '../../hooks/useStore.types';
+import { ElementModalMode } from './ElementModal.types';
+
+type SlideAreaProps = {
+  slideIndex: number;
+  setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
+  handleTextElementModal: (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => void;
+};
+
+const SlideArea = ({
+  slideIndex,
+  setSlideIndex,
+  handleTextElementModal,
+}: SlideAreaProps) => {
+  const params = useParams();
+  const id = params.id as string;
+  const store = useStore();
+  const presentation = store.store[id];
+  const slides = presentation?.slides;
+  const theme = useTheme();
+
+  const handleClickElement = (
+    type: SlideElementsWithoutBase['elementType'],
+    elementId: string
+  ) => {
+    if (type === 'text') {
+      handleTextElementModal('edit', elementId);
+    }
+  };
+
+  const renderElements = (slide: Slide) =>
+    slide.elements.map((element) => {
+      let innerElement;
+      let containerStyles;
+      if (element.elementType === 'text') {
+        innerElement = (
+          <Typography
+            sx={{
+              fontSize: element.fontSize,
+              color: element.color,
+            }}
+          >
+            {element.text}
+          </Typography>
+        );
+        containerStyles = {
+          border: `solid 1px ${theme.palette.nord.white[2]}`,
+        };
+      }
+      // TODO: double click to edit
+      return (
+        <Box
+          key={element.id}
+          onClick={() => handleClickElement(element.elementType, element.id)}
+          sx={{
+            position: 'absolute',
+            left: `${element.x}%`,
+            top: `${element.y}%`,
+            width: `${element.width}%`,
+            height: `${element.height}%`,
+            cursor: 'pointer',
+            ...containerStyles,
+          }}
+        >
+          {innerElement}
+        </Box>
+      );
+    });
+
+  return (
+    <>
+      <Box
+        sx={{
+          flex: '1 1 auto',
+          position: 'relative',
+        }}
+      >
+        <Paper
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '95%',
+            height: '95%',
+            overflowX: 'hidden',
+            maxWidth: 1000,
+            aspectRatio: '1.55/1',
+          }}
+          elevation={2}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              height: '100%',
+              transition: 'all 0.3s',
+              transform: `translateX(-${slideIndex * 100}%)`,
+            }}
+          >
+            {slides &&
+              slides.map((slide) => {
+                return (
+                  <Box
+                    key={slide.id}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      flexShrink: '0',
+                    }}
+                  >
+                    {renderElements(slide)}
+                  </Box>
+                );
+              })}
+          </Box>
+          <Typography
+            sx={{
+              fontSize: '1em',
+              position: 'absolute',
+              bottom: '3%',
+              left: '20px',
+            }}
+          >
+            {presentation?.slides.length === 1
+              ? '1'
+              : `${slideIndex + 1}/${presentation?.slides.length}`}
+          </Typography>
+        </Paper>
+      </Box>
+      <SlideControlbar slideIndex={slideIndex} setSlideIndex={setSlideIndex} />
+    </>
+  );
+};
+
+export default SlideArea;
