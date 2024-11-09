@@ -34,18 +34,28 @@ const TextElementModal = ({
   const [color, setColor] = useState('');
 
   useEffect(() => {
-    if (!slide || mode !== 'edit') return;
-    const element = slide.elements.find(
-      (ele) => ele.id === elementId
-    ) as TextSlideElement & SlideElementBase;
-    if (element) {
-      setX(element.x.toString());
-      setY(element.y.toString());
-      setWidth(element.width.toString());
-      setHeight(element.height.toString());
-      setText(element.text);
-      setFontSize(element.fontSize.toString());
-      setColor(element.color);
+    if (!slide) return;
+    if (mode === 'create') {
+      setX('');
+      setY('');
+      setWidth('');
+      setHeight('');
+      setText('');
+      setFontSize('');
+      setColor('');
+    } else {
+      const element = slide.elements.find(
+        (ele) => ele.id === elementId
+      ) as TextSlideElement & SlideElementBase;
+      if (element) {
+        setX(element.x.toString());
+        setY(element.y.toString());
+        setWidth(element.width.toString());
+        setHeight(element.height.toString());
+        setText(element.text);
+        setFontSize(element.fontSize.toString());
+        setColor(element.color);
+      }
     }
   }, [mode, slide, elementId]);
 
@@ -98,9 +108,7 @@ const TextElementModal = ({
   const handleChangeColor = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^#/.test(e.target.value)) {
-      setColor(e.target.value);
-    }
+    setColor(e.target.value);
   };
 
   const handleSubmit = async () => {
@@ -109,14 +117,6 @@ const TextElementModal = ({
     const widthInt = parseInt(width);
     const heightInt = parseInt(height);
     const fontSizeInt = parseInt(fontSize);
-    if (isNaN(xInt) || xInt < 0 || xInt > 100) {
-      toast.error('Invalid x coordinate');
-      return;
-    }
-    if (isNaN(yInt) || yInt < 0 || yInt > 100) {
-      toast.error('Invalid y coordinate');
-      return;
-    }
     if (isNaN(widthInt) || widthInt < 0 || widthInt > 100) {
       toast.error('Invalid width');
       return;
@@ -153,6 +153,14 @@ const TextElementModal = ({
         toast.error('Fail to create text element');
       }
     } else if (mode === 'edit') {
+      if (isNaN(xInt) || xInt < 0 || xInt > 100) {
+        toast.error('Invalid x coordinate');
+        return;
+      }
+      if (isNaN(yInt) || yInt < 0 || yInt > 100) {
+        toast.error('Invalid y coordinate');
+        return;
+      }
       const textElement: TextSlideElement & SlideElementBase = {
         id: elementId,
         x: xInt,
@@ -171,13 +179,6 @@ const TextElementModal = ({
         toast.error('Fail to create text element');
       }
     }
-    setX('');
-    setY('');
-    setWidth('');
-    setHeight('');
-    setText('');
-    setFontSize('');
-    setColor('');
   };
 
   return (

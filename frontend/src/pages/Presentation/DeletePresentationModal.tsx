@@ -1,17 +1,36 @@
 import Modal from '../../components/Modal';
 import { Typography, Button, Box } from '@mui/material';
+import { useStore } from '../../hooks/useStore';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 type DeletePresentationModalProps = {
   open: boolean;
-  onDelete: () => void;
   onClose: () => void;
 };
 
 const DeletePresentationModal = ({
   open,
-  onDelete,
   onClose,
 }: DeletePresentationModalProps) => {
+  const store = useStore();
+  const params = useParams();
+  const id = params.id as string;
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    if (!id) {
+      return;
+    }
+    try {
+      await store.deletePresentation(id);
+      onClose();
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error('Fail to delete presentation');
+    }
+  };
+
   return (
     <Modal
       open={open}
@@ -33,7 +52,7 @@ const DeletePresentationModal = ({
           justifyContent: 'center',
         }}
       >
-        <Button variant="contained" onClick={onDelete}>
+        <Button variant="contained" onClick={handleSubmit}>
           Yes
         </Button>
         <Button variant="outlined" color="secondary" onClick={onClose}>
