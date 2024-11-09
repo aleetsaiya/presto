@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/presentations/:id',
+        path: '/presentations/:id/:slideIdx',
         element: (
           <ProtectedRoute>
             <Presentation />

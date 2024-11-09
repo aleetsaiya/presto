@@ -7,29 +7,37 @@ export type SlideElementBase = {
 };
 
 export type TextSlideElement = {
-  size: number;
+  width: number;
+  height: number;
   text: string;
   fontSize: number;
   color: string;
+  elementType: 'text';
 };
 
 export type ImageSlideElement = {
-  size: number;
+  width: number;
+  height: number;
   img: string;
   imgType: UploadImageType;
   alt: string;
+  elementType: 'image';
 };
 
 export type VideoSlideElement = {
-  size: number;
+  width: number;
+  height: number;
   url: string;
   autoplay: boolean;
+  elementType: 'video';
 };
 
 export type CodeSlideElement = {
-  size: number;
+  width: number;
+  height: number;
   code: string;
   fontSize: number;
+  elementType: 'code';
 };
 
 export type SlideElementsWithoutBase =
@@ -84,7 +92,7 @@ export type StoreContextType = {
     presentationId: string,
     slideId: string
   ) => Promise<void>;
-  updateSlideElement: <T extends SlideElementsWithoutBase>(
+  updateSlideElement: <T extends SlideElements>(
     presentationId: string,
     slideId: string,
     elementId: string,

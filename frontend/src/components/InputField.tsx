@@ -1,5 +1,5 @@
 import { SxProps } from '@mui/system';
-import { OutlinedInput, Input, InputLabel, FormControl } from '@mui/material';
+import { Input, InputLabel, FormControl, TextField } from '@mui/material';
 
 type InputFieldProps = {
   id: string;
@@ -8,6 +8,7 @@ type InputFieldProps = {
   type?: string;
   sx?: SxProps;
   value?: string;
+  autoComplete?: string;
   onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -20,35 +21,48 @@ const InputField = ({
   label,
   sx,
   value,
+  autoComplete,
   onChange,
 }: InputFieldProps) => {
-  return (
+  return outlined ? (
+    <TextField
+      id={id}
+      label={label}
+      value={value}
+      onChange={onChange}
+      sx={{
+        width: '100%',
+        ...sx,
+      }}
+      autoComplete={
+        autoComplete
+          ? autoComplete
+          : type === 'password'
+            ? 'current-password'
+            : undefined
+      }
+    />
+  ) : (
     <FormControl fullWidth size="small" sx={sx}>
-      {!outlined && label && (
+      {label && (
         <InputLabel size="small" htmlFor={id}>
           {label}
         </InputLabel>
       )}
-      {outlined ? (
-        <OutlinedInput
-          id={id}
-          size="small"
-          type={type}
-          value={value}
-          onChange={onChange}
-          autoComplete={type === 'password' ? 'current-password' : 'on'}
-        />
-      ) : (
-        <Input
-          id={id}
-          size="small"
-          type={type}
-          value={value}
-          onChange={onChange}
-          sx={{ pl: 2 }}
-          autoComplete={type === 'password' ? 'current-password' : 'on'}
-        ></Input>
-      )}
+      <Input
+        id={id}
+        size="small"
+        type={type}
+        value={value}
+        onChange={onChange}
+        autoComplete={
+          autoComplete
+            ? autoComplete
+            : type === 'password'
+              ? 'current-password'
+              : undefined
+        }
+      ></Input>
     </FormControl>
   );
 };
