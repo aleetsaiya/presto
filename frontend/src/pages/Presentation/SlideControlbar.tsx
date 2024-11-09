@@ -182,6 +182,22 @@ export const SlideControlbar = ({
             }}
           />
         </IconButton>
+        <IconButton
+          onClick={handleClickNextSlide}
+          sx={{
+            visibility: slideIndex < slidesLength - 1 ? 'visible' : 'hidden',
+          }}
+        >
+          <KeyboardArrowRightIcon
+            sx={{
+              fontSize: 45,
+
+              '&:hover': {
+                color: theme.palette.nord.black[0],
+              },
+            }}
+          />
+        </IconButton>
       </Box>
     </Box>
   );

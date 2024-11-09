@@ -170,6 +170,93 @@ const Sidebar = ({
           px: paddingHorizontal,
         }}
       />
+      <Box
+        sx={{
+          mt: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: 2,
+          px: paddingHorizontal,
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+          }}
+        >
+          <Button
+            size="large"
+            onClick={handleShowTextModal}
+            sx={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textTransform: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <TitleIcon fontSize="large" />
+            <Typography variant="body1">Text</Typography>
+          </Button>
+          <Button
+            size="large"
+            sx={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textTransform: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <ImageIcon fontSize="large" />
+            <Typography variant="body1">Image</Typography>
+          </Button>
+        </Box>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+          }}
+        >
+          <Button
+            size="large"
+            sx={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textTransform: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <VideocamIcon fontSize="large" />
+            <Typography variant="body2">Video</Typography>
+          </Button>
+          <Button
+            size="large"
+            sx={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textTransform: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <CodeIcon fontSize="large" />
+            <Typography variant="body2">Code</Typography>
+          </Button>
+        </Box>
+      </Box>
     </Drawer>
   );
 };
