@@ -187,7 +187,98 @@ const TextElementModal = ({
       modalContainerStyle={{
         width: 450,
       }}
-    ></Modal>
+    >
+      <Typography variant="h6" mb={2}>
+        {mode === 'create' ? 'Create' : 'Edit'} Text
+      </Typography>
+      {mode === 'edit' && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 3,
+            mb: 3,
+          }}
+        >
+          <InputField
+            id="text-element-width"
+            value={x}
+            label="X coordinate (%)"
+            onChange={handleChangeX}
+            autoComplete="off"
+          />
+          <InputField
+            id="text-element-height"
+            value={y}
+            label="Y coordinate (%)"
+            onChange={handleChangeY}
+            autoComplete="off"
+          />
+        </Box>
+      )}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3,
+        }}
+      >
+        <InputField
+          id="text-element-width"
+          value={width}
+          label="Width (%)"
+          onChange={handleChangeWidth}
+          autoComplete="off"
+        />
+        <InputField
+          id="text-element-height"
+          value={height}
+          label="Height (%)"
+          onChange={handleChangeHeight}
+          autoComplete="off"
+        />
+      </Box>
+      <InputField
+        id="text-element-text"
+        value={text}
+        label="Text"
+        onChange={handleChangeText}
+        autoComplete="off"
+        sx={{
+          mt: 3,
+        }}
+      />
+      <InputField
+        id="text-element-fontSize"
+        value={fontSize}
+        label="Font Size (em)"
+        onChange={handleChangeFontSize}
+        autoComplete="off"
+        sx={{
+          mt: 3,
+        }}
+      />
+      <InputField
+        id="text-element-fontSize"
+        value={color}
+        label="Colour (hex)"
+        onChange={handleChangeColor}
+        autoComplete="off"
+        sx={{
+          mt: 3,
+        }}
+      />
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleSubmit}
+        sx={{ mt: 3 }}
+      >
+        {mode === 'create' ? 'Create' : 'Save'}
+      </Button>
+    </Modal>
   );
 };
 
