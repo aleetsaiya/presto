@@ -1,63 +1,97 @@
 import { useState } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { Box, Paper } from '@mui/material';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { useStore } from '../../hooks/useStore';
 import { toast } from 'react-toastify';
+import { ElementModalMode } from './ElementModal.types';
 import Navbar from './Navbar';
 import DeletePresentationModal from './DeletePresentationModal';
-import SideLeft from './SidebarLeft';
-import SidebarRight from './SidebarRight';
+import Sidebar from './Sidebar';
+import SlideArea from './SlideArea';
+import EditPresentationModal from './EditPresentationModal';
+import TextElementModal from './TextElementModal';
 
 const Presentation = () => {
   const params = useParams();
   const id = params.id as string;
-
-  const [openModal, setOpenModal] = useState(false);
-  const [slideIndex, setSlideIndex] = useState(0);
-  const navigate = useNavigate();
+  const paramSlideIndex = parseInt(params.slideIdx as string) as number;
+  const [showDeletePresModal, setShowDeletePresModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showTextElementModal, setShowTextElementModal] =
+    useState<ElementModalMode>('close');
+  const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
+  const [editElementId, setEditElementId] = useState('');
   const store = useStore();
+  const navigate = useNavigate();
+  const presentation = store.store[id];
+  const slides = presentation?.slides;
 
-  const handleDeletePresentation = async () => {
-    if (!id) {
-      return;
-    }
-    try {
-      await store.deletePresentation(id);
-      toast.success('Delete presentation successfully ');
-      setOpenModal(false);
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error('Fail to delete presentation');
-    }
-  };
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleClickNextSlide = () => {
-    setSlideIndex((idx) => idx + 1);
-  };
-
-  const handleClickPrevSlide = () => {
-    setSlideIndex((idx) => idx - 1);
-  };
-
-  if (!store.isLoading && !Object.keys(store.store).includes(id)) {
+  if (
+    !store.isLoading &&
+    (!Object.keys(store.store).includes(id) ||
+      store.store[id].slides.length <= paramSlideIndex)
+  ) {
     toast.error('Invalud url');
     return <Navigate to="/dashboard" />;
   }
 
+  const handleShowDeletePresModal = () => {
+    setShowDeletePresModal(true);
+  };
+
+  const handleCloseDeletePresModal = () => {
+    setShowDeletePresModal(false);
+  };
+
+  const handleShowEditModal = () => {
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+  };
+
+  const handleCloseTextElementModal = () => {
+    setShowTextElementModal('close');
+  };
+
+  const handleTextElementModal = (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => {
+    if (focusElementId) {
+      setEditElementId(focusElementId);
+    }
+    setShowTextElementModal(mode);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const key = e.key;
+    if (key === 'ArrowRight' && slideIndex + 1 < (slides?.length || 0)) {
+      setSlideIndex((slideIndex) => slideIndex + 1);
+      navigate(`/presentations/${id}/${slideIndex + 1}`);
+      return;
+    }
+    if (key === 'ArrowLeft' && slideIndex > 0) {
+      setSlideIndex((slideIndex) => slideIndex - 1);
+      navigate(`/presentations/${id}/${slideIndex - 1}`);
+      return;
+    }
+  };
   return (
     <>
       <DeletePresentationModal
-        open={openModal}
-        onDelete={handleDeletePresentation}
-        onClose={handleCloseModal}
+        open={showDeletePresModal}
+        onClose={handleCloseDeletePresModal}
+      />
+      <EditPresentationModal
+        open={showEditModal}
+        onClose={handleCloseEditModal}
+      />
+      <TextElementModal
+        mode={showTextElementModal}
+        elementId={editElementId}
+        onClose={handleCloseTextElementModal}
       />
       <Box
         sx={{
@@ -67,46 +101,27 @@ const Presentation = () => {
           display: 'flex',
           flexDirection: 'column',
         }}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
       >
-        <Navbar onDeletePresentation={handleOpenModal} />
+        <Navbar onDeletePresentation={handleShowDeletePresModal} />
         <Box
           sx={{
             display: 'flex',
             flex: '1 1 auto',
+            position: 'relative',
           }}
         >
-          <SideLeft width={280} />
-          {/* Main Area */}
-          <Box
-            component="main"
-            sx={{
-              flex: '1 1 auto',
-              position: 'relative',
-            }}
-          >
-            <Paper
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: {
-                  xs: '50%',
-                  md: 0,
-                },
-                width: '95%',
-                height: '95%',
-                transform: {
-                  xs: 'translate(-50%, -50%)',
-                  md: 'translateY(-50%)',
-                },
-              }}
-              elevation={4}
-            ></Paper>
-            <SidebarRight
-              slideIndex={slideIndex}
-              onClickPrevSlide={handleClickPrevSlide}
-              onClickNextSlide={handleClickNextSlide}
-            />
-          </Box>
+          <Sidebar
+            width={280}
+            handleShowEditModal={handleShowEditModal}
+            handleTextElementModal={handleTextElementModal}
+          />
+          <SlideArea
+            slideIndex={slideIndex}
+            setSlideIndex={setSlideIndex}
+            handleTextElementModal={handleTextElementModal}
+          />
         </Box>
       </Box>
     </>
