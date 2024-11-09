@@ -1,24 +1,46 @@
+import { useState } from 'react';
 import Modal from '../../components/Modal';
 import { Typography, Button } from '@mui/material';
 import InputField from '../../components/InputField';
+import { v4 as uuidv4 } from 'uuid';
+import { useStore } from '../../hooks/useStore';
+import { toast } from 'react-toastify';
 
 type NewPresentationModalProps = {
   open: boolean;
-  value: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
   onClose: () => void;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const NewPresentationModal = ({
-  open,
-  value,
-  onClose,
-  onChange,
-  onClick,
-}: NewPresentationModalProps) => {
+const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const store = useStore();
+
+  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setName(e.target.value);
+  }
+
+  const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setDescription(e.target.value);
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name === '') {
+      toast.error('Slide name can not be empty');
+      return;
+    }
+    try {
+      const id = uuidv4();
+      await store.createPresentation(id, name, description);
+      onClose();
+      toast.success('Creates a new presentation successfully');
+      setName('');
+    } catch (err) {
+      toast.error('Fail to create new presentation.');
+    }
+  }
+
   return (
     <Modal
       open={open}
@@ -32,14 +54,23 @@ const NewPresentationModal = ({
       </Typography>
       <InputField
         id="new-presentation-input"
-        outlined
-        value={value}
-        onChange={onChange}
+        label="Slide Name"
+        value={name}
+        onChange={handleChangeName}
+        sx={{ mb: 3 }}
+        autoComplete="off"
+      />
+      <InputField
+        id="new-presentation-input"
+        label="Description (optional)"
+        value={description}
+        onChange={handleChangeDescription}
+        autoComplete="off"
       />
       <Button
         variant="contained"
         color="secondary"
-        onClick={onClick}
+        onClick={handleSubmit}
         sx={{ mt: 3 }}
       >
         Create

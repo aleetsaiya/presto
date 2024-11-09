@@ -2,7 +2,6 @@ import { forwardRef } from 'react';
 import { Box } from '@mui/material';
 import Presentation from './Presentation';
 import { useStore } from '../../hooks/useStore';
-import { useNavigate } from 'react-router-dom';
 
 type PresentationsProps = {
   /** Which presentation (id) should show animation */
@@ -14,14 +13,9 @@ const Presentations = forwardRef<Map<string, HTMLElement>, PresentationsProps>(
   ({ presentationAnimation, setPresentationAnimation }, ref) => {
     const store = useStore();
     const typedRef = ref as React.MutableRefObject<Map<string, HTMLElement>>;
-    const navigate = useNavigate();
     const ids = Object.keys(store.store);
     // sort id by created time, the newest will be at the top
     ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt);
-
-    const handleClick = (id: string) => {
-      navigate(`/presentations/${id}`);
-    };
 
     return (
       <Box
@@ -59,7 +53,6 @@ const Presentations = forwardRef<Map<string, HTMLElement>, PresentationsProps>(
               <Presentation
                 key={id}
                 presentation={presentation}
-                onClick={handleClick}
                 showAnimation={presentationAnimation === id}
                 setShowAnimation={setPresentationAnimation}
                 ref={(element) => {

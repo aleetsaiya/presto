@@ -1,5 +1,5 @@
-import { Box, Button, Typography, Link } from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Box, Button, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NavbarContainer from '../../components/Navbar';
 import LogoutBtn from '../../components/LogoutBtn';
