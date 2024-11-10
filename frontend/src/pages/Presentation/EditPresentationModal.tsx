@@ -39,7 +39,8 @@ const EditPresentationModal = ({
     setDescription(e.target.value);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const newPresentation = { ...presentation };
       newPresentation.name = title;
@@ -59,34 +60,36 @@ const EditPresentationModal = ({
         width: 400,
       }}
     >
-      <Typography variant="h6" mb={2}>
-        Edit Presentation
-      </Typography>
-      <InputField
-        id="edit-presentation-name"
-        value={title}
-        label="Title"
-        onChange={handleChangeTitle}
-        autoComplete="off"
-      />
-      <InputField
-        id="edit-presentation-description"
-        value={description}
-        label="Description"
-        onChange={handleChangeDescription}
-        autoComplete="off"
-        sx={{
-          mt: 3,
-        }}
-      />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        Save
-      </Button>
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          Edit Presentation
+        </Typography>
+        <InputField
+          id="edit-presentation-name"
+          value={title}
+          label="Title"
+          onChange={handleChangeTitle}
+          autoComplete="off"
+        />
+        <InputField
+          id="edit-presentation-description"
+          value={description}
+          label="Description"
+          onChange={handleChangeDescription}
+          autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
+        />
+        <Button
+          type='submit'
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 3 }}
+        >
+          Save
+        </Button>
+      </form>
     </Modal>
   );
 };
