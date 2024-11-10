@@ -74,7 +74,7 @@ const CodeElementModal = ({
   const handleChangeX = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setX(e.target.value);
     }
   };
@@ -82,7 +82,7 @@ const CodeElementModal = ({
   const handleChangeY = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setY(e.target.value);
     }
   };
@@ -90,7 +90,7 @@ const CodeElementModal = ({
   const handleChangeWidth = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setWidth(e.target.value);
     }
   };
@@ -98,7 +98,7 @@ const CodeElementModal = ({
   const handleChangeHeight = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setHeight(e.target.value);
     }
   };
@@ -112,7 +112,7 @@ const CodeElementModal = ({
   const handleChangeFontSize = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setFontSize(e.target.value);
     }
   };
@@ -121,17 +121,18 @@ const CodeElementModal = ({
     setLanguage(e.target.value as CodeSlideElement['language']);
   };
 
-  const handleSubmit = async () => {
-    const xInt = parseInt(x);
-    const yInt = parseInt(y);
-    const widthInt = parseInt(width);
-    const heightInt = parseInt(height);
-    const fontSizeInt = parseInt(fontSize);
-    if (isNaN(widthInt) || widthInt < 0 || widthInt > 100) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const xFloat = parseFloat(x);
+    const yFloat = parseFloat(y);
+    const widthFloat = parseFloat(width);
+    const heightFloat = parseFloat(height);
+    const fontSizeFloat = parseFloat(fontSize);
+    if (isNaN(widthFloat) || widthFloat < 0 || widthFloat > 100) {
       toast.error('Invalid width');
       return;
     }
-    if (isNaN(heightInt) || heightInt < 0 || heightInt > 100) {
+    if (isNaN(heightFloat) || heightFloat < 0 || heightFloat > 100) {
       toast.error('Invalid height');
       return;
     }
@@ -141,10 +142,10 @@ const CodeElementModal = ({
     }
     if (mode === 'create') {
       const codeElement: CodeSlideElement = {
-        width: widthInt,
-        height: heightInt,
+        width: widthFloat,
+        height: heightFloat,
         code,
-        fontSize: fontSizeInt,
+        fontSize: fontSizeFloat,
         language,
         elementType: 'code',
       };
@@ -155,22 +156,22 @@ const CodeElementModal = ({
         toast.error('Fail to create code');
       }
     } else if (mode === 'edit') {
-      if (isNaN(xInt) || xInt < 0 || xInt > 100) {
+      if (isNaN(xFloat) || xFloat < 0 || xFloat > 100) {
         toast.error('Invalid x coordinate');
         return;
       }
-      if (isNaN(yInt) || yInt < 0 || yInt > 100) {
+      if (isNaN(yFloat) || yFloat < 0 || yFloat > 100) {
         toast.error('Invalid y coordinate');
         return;
       }
       const codeElement: CodeSlideElement & SlideElementBase = {
         id: elementId,
-        x: xInt,
-        y: yInt,
-        width: widthInt,
-        height: heightInt,
+        x: xFloat,
+        y: yFloat,
+        width: widthFloat,
+        height: heightFloat,
         code,
-        fontSize: fontSizeInt,
+        fontSize: fontSizeFloat,
         language,
         elementType: 'code',
       };
@@ -191,117 +192,119 @@ const CodeElementModal = ({
         width: 600,
       }}
     >
-      <Typography variant="h6" mb={2}>
-        {mode === 'create' ? 'Create' : 'Edit'} Code
-      </Typography>
-      {mode === 'edit' && (
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          {mode === 'create' ? 'Create' : 'Edit'} Code
+        </Typography>
+        {mode === 'edit' && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 3,
+              mb: 3,
+            }}
+          >
+            <InputField
+              id="code-element-x"
+              value={x}
+              label="X coordinate (%)"
+              onChange={handleChangeX}
+              autoComplete="off"
+            />
+            <InputField
+              id="code-element-y"
+              value={y}
+              label="Y coordinate (%)"
+              onChange={handleChangeY}
+              autoComplete="off"
+            />
+          </Box>
+        )}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 3,
-            mb: 3,
           }}
         >
           <InputField
-            id="code-element-x"
-            value={x}
-            label="X coordinate (%)"
-            onChange={handleChangeX}
+            id="code-element-width"
+            value={width}
+            label="Width (%)"
+            onChange={handleChangeWidth}
             autoComplete="off"
           />
           <InputField
-            id="code-element-y"
-            value={y}
-            label="Y coordinate (%)"
-            onChange={handleChangeY}
+            id="code-element-height"
+            value={height}
+            label="Height (%)"
+            onChange={handleChangeHeight}
             autoComplete="off"
           />
         </Box>
-      )}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 3,
-        }}
-      >
-        <InputField
-          id="code-element-width"
-          value={width}
-          label="Width (%)"
-          onChange={handleChangeWidth}
-          autoComplete="off"
-        />
-        <InputField
-          id="code-element-height"
-          value={height}
-          label="Height (%)"
-          onChange={handleChangeHeight}
-          autoComplete="off"
-        />
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          gap: 3,
-        }}
-      >
-        <InputField
-          id="code-element-fontSize"
-          value={fontSize}
-          label="Font Size"
-          onChange={handleChangeFontSize}
-          autoComplete="off"
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            gap: 3,
+          }}
+        >
+          <InputField
+            id="code-element-fontSize"
+            value={fontSize}
+            label="Font Size"
+            onChange={handleChangeFontSize}
+            autoComplete="off"
+            sx={{
+              mt: 3,
+            }}
+          />
+          <FormControl fullWidth variant="standard">
+            <InputLabel id="code-element-language-label">Language</InputLabel>
+            <Select
+              labelId="code-element-languate-label"
+              id="code-element-language"
+              value={language}
+              label="Language"
+              onChange={handleChangeLanguage}
+            >
+              <MenuItem value="javascript">Javascript</MenuItem>
+              <MenuItem value="python">Python</MenuItem>
+              <MenuItem value="c">C</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Box
           sx={{
             mt: 3,
           }}
-        />
-        <FormControl fullWidth variant="standard">
-          <InputLabel id="code-element-language-label">Language</InputLabel>
-          <Select
-            labelId="code-element-languate-label"
-            id="code-element-language"
-            value={language}
-            label="Language"
-            onChange={handleChangeLanguage}
-          >
-            <MenuItem value="javascript">Javascript</MenuItem>
-            <MenuItem value="python">Python</MenuItem>
-            <MenuItem value="c">C</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box
-        sx={{
-          mt: 3,
-        }}
-      >
-        <Typography variant="body1">Code</Typography>
-        <TextField
-          multiline
-          variant="outlined"
-          rows={8}
-          sx={{
-            mt: 1,
-            width: '100%',
-          }}
-          value={code}
-          onChange={handleChangeCode}
-        />
-      </Box>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        {mode === 'create' ? 'Create' : 'Save'}
-      </Button>
+        >
+          <Typography variant="body1">Code</Typography>
+          <TextField
+            multiline
+            variant="outlined"
+            rows={8}
+            sx={{
+              mt: 1,
+              width: '100%',
+            }}
+            value={code}
+            onChange={handleChangeCode}
+          />
+        </Box>
+        <Button
+          type='submit'
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 3 }}
+        >
+          {mode === 'create' ? 'Create' : 'Save'}
+        </Button>
+      </form>
     </Modal>
   );
 };
