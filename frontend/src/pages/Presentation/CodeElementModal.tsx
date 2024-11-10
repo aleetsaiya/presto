@@ -191,6 +191,117 @@ const CodeElementModal = ({
         width: 600,
       }}
     >
+      <Typography variant="h6" mb={2}>
+        {mode === 'create' ? 'Create' : 'Edit'} Code
+      </Typography>
+      {mode === 'edit' && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 3,
+            mb: 3,
+          }}
+        >
+          <InputField
+            id="code-element-x"
+            value={x}
+            label="X coordinate (%)"
+            onChange={handleChangeX}
+            autoComplete="off"
+          />
+          <InputField
+            id="code-element-y"
+            value={y}
+            label="Y coordinate (%)"
+            onChange={handleChangeY}
+            autoComplete="off"
+          />
+        </Box>
+      )}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3,
+        }}
+      >
+        <InputField
+          id="code-element-width"
+          value={width}
+          label="Width (%)"
+          onChange={handleChangeWidth}
+          autoComplete="off"
+        />
+        <InputField
+          id="code-element-height"
+          value={height}
+          label="Height (%)"
+          onChange={handleChangeHeight}
+          autoComplete="off"
+        />
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          gap: 3,
+        }}
+      >
+        <InputField
+          id="code-element-fontSize"
+          value={fontSize}
+          label="Font Size"
+          onChange={handleChangeFontSize}
+          autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
+        />
+        <FormControl fullWidth variant="standard">
+          <InputLabel id="code-element-language-label">Language</InputLabel>
+          <Select
+            labelId="code-element-languate-label"
+            id="code-element-language"
+            value={language}
+            label="Language"
+            onChange={handleChangeLanguage}
+          >
+            <MenuItem value="javascript">Javascript</MenuItem>
+            <MenuItem value="python">Python</MenuItem>
+            <MenuItem value="c">C</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+      <Box
+        sx={{
+          mt: 3,
+        }}
+      >
+        <Typography variant="body1">Code</Typography>
+        <TextField
+          multiline
+          variant="outlined"
+          rows={8}
+          sx={{
+            mt: 1,
+            width: '100%',
+          }}
+          value={code}
+          onChange={handleChangeCode}
+        />
+      </Box>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleSubmit}
+        sx={{ mt: 3 }}
+      >
+        {mode === 'create' ? 'Create' : 'Save'}
+      </Button>
     </Modal>
   );
 };
