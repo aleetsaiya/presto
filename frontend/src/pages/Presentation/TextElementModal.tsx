@@ -63,7 +63,7 @@ const TextElementModal = ({
   const handleChangeX = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setX(e.target.value);
     }
   };
@@ -71,7 +71,7 @@ const TextElementModal = ({
   const handleChangeY = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setY(e.target.value);
     }
   };
@@ -79,7 +79,7 @@ const TextElementModal = ({
   const handleChangeWidth = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setWidth(e.target.value);
     }
   };
@@ -87,7 +87,7 @@ const TextElementModal = ({
   const handleChangeHeight = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setHeight(e.target.value);
     }
   };
@@ -101,7 +101,7 @@ const TextElementModal = ({
   const handleChangeFontSize = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setFontSize(e.target.value);
     }
   };
@@ -112,21 +112,22 @@ const TextElementModal = ({
     setColor(e.target.value);
   };
 
-  const handleSubmit = async () => {
-    const xInt = parseInt(x);
-    const yInt = parseInt(y);
-    const widthInt = parseInt(width);
-    const heightInt = parseInt(height);
-    const fontSizeInt = parseInt(fontSize);
-    if (isNaN(widthInt) || widthInt < 0 || widthInt > 100) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const xFloat = parseFloat(x);
+    const yFloat = parseFloat(y);
+    const widthFloat = parseFloat(width);
+    const heightFloat = parseFloat(height);
+    const fontSizeFloat = parseFloat(fontSize);
+    if (isNaN(widthFloat) || widthFloat < 0 || widthFloat > 100) {
       toast.error('Invalid width');
       return;
     }
-    if (isNaN(heightInt) || heightInt < 0 || heightInt > 100) {
+    if (isNaN(heightFloat) || heightFloat < 0 || heightFloat > 100) {
       toast.error('Invalid height');
       return;
     }
-    if (isNaN(fontSizeInt)) {
+    if (isNaN(fontSizeFloat)) {
       toast.error('Invalid fontSize');
       return;
     }
@@ -142,9 +143,9 @@ const TextElementModal = ({
       const textElement: TextSlideElement = {
         text,
         color,
-        width: widthInt,
-        height: heightInt,
-        fontSize: fontSizeInt,
+        width: widthFloat,
+        height: heightFloat,
+        fontSize: fontSizeFloat,
         elementType: 'text',
       };
       try {
@@ -154,23 +155,23 @@ const TextElementModal = ({
         toast.error('Fail to create new text');
       }
     } else if (mode === 'edit') {
-      if (isNaN(xInt) || xInt < 0 || xInt > 100) {
+      if (isNaN(xFloat) || xFloat < 0 || xFloat > 100) {
         toast.error('Invalid x coordinate');
         return;
       }
-      if (isNaN(yInt) || yInt < 0 || yInt > 100) {
+      if (isNaN(yFloat) || yFloat < 0 || yFloat > 100) {
         toast.error('Invalid y coordinate');
         return;
       }
       const textElement: TextSlideElement & SlideElementBase = {
         id: elementId,
-        x: xInt,
-        y: yInt,
+        x: xFloat,
+        y: yFloat,
         text,
         color,
-        width: widthInt,
-        height: heightInt,
-        fontSize: fontSizeInt,
+        width: widthFloat,
+        height: heightFloat,
+        fontSize: fontSizeFloat,
         elementType: 'text',
       };
       try {
@@ -190,115 +191,117 @@ const TextElementModal = ({
         width: 450,
       }}
     >
-      <Typography variant="h6" mb={2}>
-        {mode === 'create' ? 'Create' : 'Edit'} Text
-      </Typography>
-      {mode === 'edit' && (
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          {mode === 'create' ? 'Create' : 'Edit'} Text
+        </Typography>
+        {mode === 'edit' && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 3,
+              mb: 3,
+            }}
+          >
+            <InputField
+              id="text-element-x"
+              value={x}
+              label="X coordinate (%)"
+              onChange={handleChangeX}
+              autoComplete="off"
+            />
+            <InputField
+              id="text-element-y"
+              value={y}
+              label="Y coordinate (%)"
+              onChange={handleChangeY}
+              autoComplete="off"
+            />
+          </Box>
+        )}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 3,
-            mb: 3,
           }}
         >
           <InputField
-            id="text-element-x"
-            value={x}
-            label="X coordinate (%)"
-            onChange={handleChangeX}
+            id="text-element-width"
+            value={width}
+            label="Width (%)"
+            onChange={handleChangeWidth}
             autoComplete="off"
           />
           <InputField
-            id="text-element-y"
-            value={y}
-            label="Y coordinate (%)"
-            onChange={handleChangeY}
+            id="text-element-height"
+            value={height}
+            label="Height (%)"
+            onChange={handleChangeHeight}
             autoComplete="off"
           />
         </Box>
-      )}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 3,
-        }}
-      >
         <InputField
-          id="text-element-width"
-          value={width}
-          label="Width (%)"
-          onChange={handleChangeWidth}
+          id="text-element-text"
+          value={text}
+          label="Text"
+          onChange={handleChangeText}
           autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
         />
         <InputField
-          id="text-element-height"
-          value={height}
-          label="Height (%)"
-          onChange={handleChangeHeight}
+          id="text-element-fontSize"
+          value={fontSize}
+          label="Font Size (em)"
+          onChange={handleChangeFontSize}
           autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
         />
-      </Box>
-      <InputField
-        id="text-element-text"
-        value={text}
-        label="Text"
-        onChange={handleChangeText}
-        autoComplete="off"
-        sx={{
-          mt: 3,
-        }}
-      />
-      <InputField
-        id="text-element-fontSize"
-        value={fontSize}
-        label="Font Size (em)"
-        onChange={handleChangeFontSize}
-        autoComplete="off"
-        sx={{
-          mt: 3,
-        }}
-      />
-      <InputField
-        id="text-element-color"
-        value={color}
-        label={
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              gap: 2,
-            }}
-          >
-            <Box>Colour (hex)</Box>
+        <InputField
+          id="text-element-color"
+          value={color}
+          label={
             <Box
               sx={{
-                aspectRatio: '1/1',
-                width: '12px',
-                backgroundColor: color,
-                border: `solid 1px ${theme.palette.nord.white[3]}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                gap: 2,
               }}
-            ></Box>
-          </Box>
-        }
-        onChange={handleChangeColor}
-        autoComplete="off"
-        sx={{
-          mt: 3,
-        }}
-      />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        {mode === 'create' ? 'Create' : 'Save'}
-      </Button>
+            >
+              <Box>Colour (hex)</Box>
+              <Box
+                sx={{
+                  aspectRatio: '1/1',
+                  width: '12px',
+                  backgroundColor: color,
+                  border: `solid 1px ${theme.palette.nord.white[3]}`,
+                }}
+              ></Box>
+            </Box>
+          }
+          onChange={handleChangeColor}
+          autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 3 }}
+        >
+          {mode === 'create' ? 'Create' : 'Save'}
+        </Button>
+      </form>
     </Modal>
   );
 };
