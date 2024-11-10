@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { SlideElementBase, TextSlideElement } from '../../hooks/useStore.types';
 import { ElementModalMode } from './ElementModal.types';
+import ColorInputField from '../../components/ColorInputField';
 
 type TextElementModalProps = {
   mode: ElementModalMode;
@@ -264,29 +265,9 @@ const TextElementModal = ({
             mt: 3,
           }}
         />
-        <InputField
+        <ColorInputField
           id="text-element-color"
           value={color}
-          label={
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                gap: 2,
-              }}
-            >
-              <Box>Colour (hex)</Box>
-              <Box
-                sx={{
-                  aspectRatio: '1/1',
-                  width: '12px',
-                  backgroundColor: color,
-                  border: `solid 1px ${theme.palette.nord.white[3]}`,
-                }}
-              ></Box>
-            </Box>
-          }
           onChange={handleChangeColor}
           autoComplete="off"
           sx={{

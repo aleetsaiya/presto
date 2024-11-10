@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AppContainer from './components/AppContainer';
 import ErrorPage from './pages/ErrorPage/ErrorPage';
 import Home from './pages/Home';
@@ -54,5 +54,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-
-// {path: '*', element: <NotFound /> },

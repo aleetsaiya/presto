@@ -12,6 +12,7 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 type SlideAreaProps = {
   slideIndex: number;
   setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
+  handleShowSlideSettingModal: () => void;
   handleTextElementModal: (
     mode: ElementModalMode,
     focusElementId?: string
@@ -35,6 +36,7 @@ let counterTimeoutId: number;
 const SlideArea = ({
   slideIndex,
   setSlideIndex,
+  handleShowSlideSettingModal,
   handleTextElementModal,
   handleImgElementModal,
   handleVideoElementModal,
@@ -81,6 +83,22 @@ const SlideArea = ({
     }
   };
 
+  const getSlideBackground = (background: Slide['background']) => {
+    if (background.type === 'image') {
+      return {
+        background: `url(${background.img})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+      };
+    } else if (background.type === 'gradient') {
+      return {
+        background: `linear-gradient(to right, ${background.gradientColorFrom}, ${background.gradientColorTo})`,
+      };
+    } else {
+      return { background: background.solidColor };
+    }
+  };
+
   const renderElements = (slide: Slide) =>
     slide.elements.map((element) => {
       let innerElement;
@@ -92,6 +110,7 @@ const SlideArea = ({
               userSelect: 'none',
               fontSize: `${element.fontSize}em`,
               color: element.color,
+              fontFamily: 'inherit',
             }}
           >
             {element.text}
@@ -120,7 +139,6 @@ const SlideArea = ({
           <iframe
             src={element.embdedUrl}
             title="YouTube video player"
-            frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
@@ -215,6 +233,8 @@ const SlideArea = ({
                       flexShrink: '0',
                       position: 'relative',
                       overflow: 'hidden',
+                      fontFamily: slide.fontFamily,
+                      ...getSlideBackground(slide.background),
                     }}
                   >
                     {renderElements(slide)}
@@ -236,7 +256,11 @@ const SlideArea = ({
           </Typography>
         </Paper>
       </Box>
-      <SlideControlbar slideIndex={slideIndex} setSlideIndex={setSlideIndex} />
+      <SlideControlbar
+        slideIndex={slideIndex}
+        setSlideIndex={setSlideIndex}
+        handleShowSlideSettingModal={handleShowSlideSettingModal}
+      />
     </>
   );
 };

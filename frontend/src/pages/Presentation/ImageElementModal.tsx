@@ -139,6 +139,7 @@ const ImageElementModal = ({
       const base64File = await fileToBase64(file);
       setBase64(base64File);
       setCurrentImg(base64File);
+      toast.success('Upload successfully');
     } catch (err) {
       toast.error('Fail to upload new thumbnail');
     }

@@ -20,11 +20,13 @@ import { toast } from 'react-toastify';
 type SlideControlbarProps = {
   slideIndex: number;
   setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
+  handleShowSlideSettingModal: () => void;
 };
 
 export const SlideControlbar = ({
   slideIndex,
   setSlideIndex,
+  handleShowSlideSettingModal,
 }: SlideControlbarProps) => {
   const params = useParams();
   const id = params.id as string;
@@ -113,10 +115,11 @@ export const SlideControlbar = ({
           </Button>
         </Tooltip>
         <Tooltip
-          title={<Typography variant="body2">Slide setting</Typography>}
+          title={<Typography variant="body2">Slide theme</Typography>}
           placement="left"
         >
           <Button
+            onClick={handleShowSlideSettingModal}
             sx={{
               minWidth: '40px',
               '&:hover': {

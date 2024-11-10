@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { forwardRef } from 'react';
 import { Paper, Typography, keyframes } from '@mui/material';
-import { Presentation as PresentationType } from '../../hooks/useStore';
+import { Presentation as PresentationType } from '../../hooks/useStore.types';
 import { useNavigate } from 'react-router-dom';
 
 type PresentationProps = {

@@ -1,7 +1,7 @@
 import { SxProps } from '@mui/system';
 import { Input, InputLabel, FormControl, TextField } from '@mui/material';
 
-type InputFieldProps = {
+export type InputFieldProps = {
   id: string;
   outlined?: boolean;
   label?: React.ReactNode;

@@ -13,6 +13,7 @@ import {
   Store,
   Presentation,
   StoreProviderProps,
+  Slide,
 } from './useStore.types';
 
 const StoreContext = createContext<StoreContextType>({} as StoreContextType);
@@ -36,6 +37,15 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const createPresentation = useCallback(
     async (id: string, name: string, description: string) => {
       setIsLoading(true);
+      const slide: Slide = {
+        id: uuidv4(),
+        elements: [],
+        fontFamily: 'Roboto',
+        background: {
+          type: 'solid-color',
+          solidColor: '#ffffff',
+        },
+      };
       const newStore = {
         ...store,
         [id]: {
@@ -43,12 +53,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           name,
           description,
           createAt: Date.now(),
-          slides: [
-            {
-              id: uuidv4(),
-              elements: [],
-            },
-          ],
+          slides: [slide],
         },
       };
       return setStoreApi(newStore)
@@ -107,14 +112,20 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const createSlide = useCallback(
     async (presentationId: string) => {
       setIsLoading(true);
+      const slide: Slide = {
+        id: uuidv4(),
+        elements: [],
+        fontFamily: 'Roboto',
+        background: {
+          type: 'solid-color',
+          solidColor: '#ffffff',
+        },
+      };
       const newStore = {
         ...store,
         [presentationId]: {
           ...store[presentationId],
-          slides: [
-            ...store[presentationId].slides,
-            { id: uuidv4(), elements: [] },
-          ],
+          slides: [...store[presentationId].slides, slide],
         },
       };
       return setStoreApi(newStore)
@@ -140,6 +151,31 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           slides: store[presentationId].slides.filter(
             (_, index) => index != slideIndex
           ),
+        },
+      };
+      return setStoreApi(newStore)
+        .then(() => {
+          setStore(newStore);
+          return Promise.resolve();
+        })
+        .catch(() => {
+          return Promise.reject();
+        })
+        .finally(() => setIsLoading(false));
+    },
+    [store]
+  );
+
+  const updateSlide: StoreContextType['updateSlide'] = useCallback(
+    async (presentationId, slideIndex, slide) => {
+      setIsLoading(true);
+      const newSlides = [...store[presentationId].slides];
+      newSlides[slideIndex] = slide;
+      const newStore = {
+        ...store,
+        [presentationId]: {
+          ...store[presentationId],
+          slides: newSlides,
         },
       };
       return setStoreApi(newStore)
@@ -286,6 +322,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         deletePresentation,
         updatePresentation,
         createSlide,
+        updateSlide,
         deleteSlide,
         createSlideElement,
         deleteSlideElement,

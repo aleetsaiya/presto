@@ -13,6 +13,7 @@ import TextElementModal from './TextElementModal';
 import ImageElementModal from './ImageElementModal';
 import VideoElementModal from './VideoElementModal';
 import CodeElementModal from './CodeElementModal';
+import SlideSettingModal from './SlideSettingModal';
 
 const Presentation = () => {
   const params = useParams();
@@ -24,6 +25,7 @@ const Presentation = () => {
   const slides = presentation?.slides;
 
   const [showDeletePresModal, setShowDeletePresModal] = useState(false);
+  const [showSlideSettingModal, setShowSlideSettingModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
   const [editElementId, setEditElementId] = useState('');
@@ -40,6 +42,14 @@ const Presentation = () => {
     toast.error('Invalud url');
     return <Navigate to="/dashboard" />;
   }
+
+  const handleShowSlideSettingModal = () => {
+    setShowSlideSettingModal(true);
+  };
+
+  const handleCloseSlideSettingModal = () => {
+    setShowSlideSettingModal(false);
+  };
 
   const handleShowDeletePresModal = () => {
     setShowDeletePresModal(true);
@@ -156,6 +166,10 @@ const Presentation = () => {
         elementId={editElementId}
         onClose={handleCloseCodeElementModal}
       />
+      <SlideSettingModal
+        open={showSlideSettingModal}
+        onClose={handleCloseSlideSettingModal}
+      />
       <Box
         sx={{
           overflow: 'auto',
@@ -186,6 +200,7 @@ const Presentation = () => {
           <SlideArea
             slideIndex={slideIndex}
             setSlideIndex={setSlideIndex}
+            handleShowSlideSettingModal={handleShowSlideSettingModal}
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
             handleVideoElementModal={handleVideoElementModal}

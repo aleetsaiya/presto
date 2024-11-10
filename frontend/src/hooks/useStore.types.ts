@@ -1,4 +1,5 @@
 export type UploadImageType = 'base64' | 'url';
+export type FontFamily = 'Roboto' | 'Sour Gummy' | 'PT Serif';
 
 export type SlideElementBase = {
   id: string;
@@ -50,9 +51,30 @@ export type SlideElementsWithoutBase =
 
 export type SlideElements = SlideElementBase & SlideElementsWithoutBase;
 
+export type SolidColorBackground = {
+  type: 'solid-color';
+  solidColor: string;
+};
+
+export type GradientColorBackground = {
+  type: 'gradient';
+  gradientColorFrom: string;
+  gradientColorTo: string;
+};
+
+export type ImageBackground = {
+  type: 'image';
+  img: string;
+  imgType: UploadImageType;
+};
+
+export type Background = SolidColorBackground | GradientColorBackground | ImageBackground;
+
 export type Slide = {
   id: string;
   elements: Array<SlideElements>;
+  fontFamily: FontFamily;
+  background: Background;
 };
 
 export type Presentation = {
@@ -63,6 +85,7 @@ export type Presentation = {
   createAt: number;
   thumbnail?: string;
   thumbnailType?: UploadImageType;
+  background?: Background;
 };
 
 export type Store = {
@@ -84,6 +107,7 @@ export type StoreContextType = {
   deletePresentation: (id: string) => Promise<void>;
   updatePresentation: (id: string, presentation: Presentation) => Promise<void>;
   createSlide: (presentationId: string) => Promise<void>;
+  updateSlide: (presentationId: string, slideIndex: number, slide: Slide) => Promise<void>;
   deleteSlide: (presentationId: string, slideIndex: number) => Promise<void>;
   createSlideElement: <T extends SlideElementsWithoutBase>(
     presentationId: string,
@@ -93,7 +117,7 @@ export type StoreContextType = {
   deleteSlideElement: (
     presentationId: string,
     slideId: string,
-    elementId: string,
+    elementId: string
   ) => Promise<void>;
   updateSlideElement: <T extends SlideElements>(
     presentationId: string,

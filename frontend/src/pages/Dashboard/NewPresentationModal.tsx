@@ -59,7 +59,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
         </Typography>
         <InputField
           id="new-presentation-name"
-          label="Slide Name"
+          label="Presentation Name"
           value={name}
           onChange={handleChangeName}
           sx={{ mb: 3 }}
