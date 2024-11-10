@@ -74,7 +74,7 @@ export type Slide = {
   id: string;
   elements: Array<SlideElements>;
   fontFamily: FontFamily;
-  background: Background;
+  background?: Background;
 };
 
 export type Presentation = {
@@ -83,9 +83,9 @@ export type Presentation = {
   description: string;
   slides: Array<Slide>;
   createAt: number;
+  background: Background;
   thumbnail?: string;
   thumbnailType?: UploadImageType;
-  background?: Background;
 };
 
 export type Store = {

@@ -18,7 +18,12 @@ import {
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FontFamily, Slide, UploadImageType } from '../../hooks/useStore.types';
+import {
+  Background,
+  FontFamily,
+  Slide,
+  UploadImageType,
+} from '../../hooks/useStore.types';
 import { fileToBase64 } from '../../utils';
 import ColorInputField from '../../components/ColorInputField';
 
@@ -36,7 +41,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
   const slide = presentation?.slides[slideIndex];
 
   const [slideBackgroundType, setSlideBackgroundType] =
-    useState<Slide['background']['type']>('solid-color');
+    useState<Background['type']>('solid-color');
   const [fontFamily, setFontFamily] = useState<FontFamily>('Roboto');
   const [solidColor, setSolidColor] = useState('');
   const [gradientFrom, setGradientFrom] = useState('');
@@ -49,8 +54,28 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
   useEffect(() => {
     if (!slide) return;
     setFontFamily(slide.fontFamily);
+    if (!slide.background) {
+      setSlideBackgroundType(presentation.background.type);
+      const backgroundType = presentation.background.type;
+      if (backgroundType === 'image') {
+        if (presentation.background.imgType === 'url') {
+          setImgUrl(presentation.background.img);
+          setImgBase64('');
+        } else {
+          setImgUrl('');
+          setImgBase64(presentation.background.img);
+        }
+        setImgBackgroundType(presentation.background.imgType);
+      } else if (backgroundType === 'gradient') {
+        setGradientTo(presentation.background.gradientColorTo);
+        setGradientFrom(presentation.background.gradientColorFrom);
+      } else if (backgroundType === 'solid-color') {
+        setSolidColor(presentation.background.solidColor);
+      }
+      return;
+    }
     const backgroundType = slide.background.type;
-    setSlideBackgroundType(slide.background.type);
+    setSlideBackgroundType(backgroundType);
     if (backgroundType === 'image') {
       if (slide.background.imgType === 'url') {
         setImgUrl(slide.background.img);
@@ -69,7 +94,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
   }, [slide]);
 
   const handleChangeSlideBackgroundType = (e: SelectChangeEvent) => {
-    setSlideBackgroundType(e.target.value as Slide['background']['type']);
+    setSlideBackgroundType(e.target.value as Background['type']);
   };
 
   const handleChangeFontFamily = (e: SelectChangeEvent) => {
@@ -120,7 +145,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let background: Slide['background'];
+    let background: Background;
     if (slideBackgroundType === 'image') {
       background = {
         type: 'image',
@@ -171,10 +196,12 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             maxWidth: 150,
           }}
         >
-          <InputLabel id="code-element-language-label">Font Family</InputLabel>
+          <InputLabel id="slide-setting-font-family-label">
+            Font Family
+          </InputLabel>
           <Select
-            labelId="code-element-languate-label"
-            id="code-element-language"
+            labelId="slide-setting-font-family-label"
+            id="slide-setting-font-family"
             value={fontFamily}
             label="Font Family"
             onChange={handleChangeFontFamily}
@@ -185,7 +212,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
           </Select>
         </FormControl>
         <FormControl fullWidth sx={{ mt: 3 }}>
-          <FormLabel id="video-element-autoplay">Slide Background</FormLabel>
+          <FormLabel id="slide-setting-background">Slide Background</FormLabel>
           <RadioGroup
             row
             name="row-radio-buttons-group"
@@ -212,7 +239,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             }}
           >
             <FormControl>
-              <FormLabel id="img-element-img-type">Image Type</FormLabel>
+              <FormLabel id="slide-setting-img-type">Image Type</FormLabel>
               <RadioGroup
                 row
                 name="row-radio-buttons-group"
@@ -229,7 +256,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             </FormControl>
             {imgBackgroundType === 'url' && (
               <InputField
-                id="img-element-url"
+                id="slide-setting-background-url"
                 value={imgUrl}
                 label="Image URL"
                 onChange={handleChangeImgUrl}
@@ -269,7 +296,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             }}
           >
             <ColorInputField
-              id="text-element-color"
+              id="slide-setting-solid-color"
               value={solidColor}
               onChange={handleChangeSolidColor}
               autoComplete="off"
@@ -283,16 +310,16 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             }}
           >
             <ColorInputField
-              id="code-element-gradient-from"
+              id="slide-setting-gradient-from"
               value={gradientFrom}
-              label="Gradient Colour From"
+              label="Gradient Colour From (hex)"
               onChange={handleChangeGradientFrom}
               autoComplete="off"
             />
             <ColorInputField
-              id="code-element-gradient-to"
+              id="slide-setting-gradient-to"
               value={gradientTo}
-              label="Gradient Colour To"
+              label="Gradient Colour To (hex)"
               onChange={handleChangeGradientTo}
               autoComplete="off"
               sx={{

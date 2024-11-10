@@ -14,6 +14,7 @@ import {
   Presentation,
   StoreProviderProps,
   Slide,
+  Background,
 } from './useStore.types';
 
 const StoreContext = createContext<StoreContextType>({} as StoreContextType);
@@ -37,14 +38,14 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const createPresentation = useCallback(
     async (id: string, name: string, description: string) => {
       setIsLoading(true);
+      const background: Background = {
+        type: 'solid-color',
+        solidColor: '#ffffff',
+      };
       const slide: Slide = {
         id: uuidv4(),
         elements: [],
         fontFamily: 'Roboto',
-        background: {
-          type: 'solid-color',
-          solidColor: '#ffffff',
-        },
       };
       const newStore = {
         ...store,
@@ -52,6 +53,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           id,
           name,
           description,
+          background,
           createAt: Date.now(),
           slides: [slide],
         },
@@ -116,10 +118,6 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         id: uuidv4(),
         elements: [],
         fontFamily: 'Roboto',
-        background: {
-          type: 'solid-color',
-          solidColor: '#ffffff',
-        },
       };
       const newStore = {
         ...store,

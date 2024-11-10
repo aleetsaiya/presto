@@ -34,7 +34,6 @@ export const getStore = () =>
   });
 
 export const setStore = (store: Store) => {
-  console.log('put store', store);
   return req.put(
     '/store',
     {
