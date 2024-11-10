@@ -74,7 +74,7 @@ const VideoElementModal = ({
   const handleChangeX = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setX(e.target.value);
     }
   };
@@ -82,7 +82,7 @@ const VideoElementModal = ({
   const handleChangeY = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setY(e.target.value);
     }
   };
@@ -90,7 +90,7 @@ const VideoElementModal = ({
   const handleChangeWidth = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setWidth(e.target.value);
     }
   };
@@ -98,7 +98,7 @@ const VideoElementModal = ({
   const handleChangeHeight = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (/^[0-9]*$/.test(e.target.value)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(e.target.value)) {
       setHeight(e.target.value);
     }
   };
@@ -127,24 +127,25 @@ const VideoElementModal = ({
     }
   };
 
-  const handleSubmit = async () => {
-    const xInt = parseInt(x);
-    const yInt = parseInt(y);
-    const widthInt = parseInt(width);
-    const heightInt = parseInt(height);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const xFloat = parseFloat(x);
+    const yFloat = parseFloat(y);
+    const widthFloat = parseFloat(width);
+    const heightFloat = parseFloat(height);
 
-    if (isNaN(widthInt) || widthInt < 0 || widthInt > 100) {
+    if (isNaN(widthFloat) || widthFloat < 0 || widthFloat > 100) {
       toast.error('Invalid width');
       return;
     }
-    if (isNaN(heightInt) || heightInt < 0 || heightInt > 100) {
+    if (isNaN(heightFloat) || heightFloat < 0 || heightFloat > 100) {
       toast.error('Invalid height');
       return;
     }
     if (mode === 'create') {
       const videoElement: VideoSlideElement = {
-        width: widthInt,
-        height: heightInt,
+        width: widthFloat,
+        height: heightFloat,
         watchUrl,
         embdedUrl: toEmbdedUrl(watchUrl),
         autoplay,
@@ -157,20 +158,20 @@ const VideoElementModal = ({
         toast.error('Fail to create video');
       }
     } else if (mode === 'edit') {
-      if (isNaN(xInt) || xInt < 0 || xInt > 100) {
+      if (isNaN(xFloat) || xFloat < 0 || xFloat > 100) {
         toast.error('Invalid x coordinate');
         return;
       }
-      if (isNaN(yInt) || yInt < 0 || yInt > 100) {
+      if (isNaN(yFloat) || yFloat < 0 || yFloat > 100) {
         toast.error('Invalid y coordinate');
         return;
       }
       const videoElement: VideoSlideElement & SlideElementBase = {
         id: elementId,
-        x: xInt,
-        y: yInt,
-        width: widthInt,
-        height: heightInt,
+        x: xFloat,
+        y: yFloat,
+        width: widthFloat,
+        height: heightFloat,
         watchUrl,
         embdedUrl: toEmbdedUrl(watchUrl),
         autoplay,
@@ -193,108 +194,114 @@ const VideoElementModal = ({
         width: 450,
       }}
     >
-      <Typography variant="h6" mb={2}>
-        {mode === 'create' ? 'Create' : 'Edit'} Video
-      </Typography>
-      {mode === 'edit' && (
-        <>
-          <iframe
-            src={embdedUrl}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-            style={{
-              width: '100%',
-              maxHeight: '150px',
-            }}
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          {mode === 'create' ? 'Create' : 'Edit'} Video
+        </Typography>
+        {mode === 'edit' && (
+          <>
+            <iframe
+              src={embdedUrl}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+              style={{
+                width: '100%',
+                maxHeight: '150px',
+              }}
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 3,
+                mt: 3,
+              }}
+            >
+              <InputField
+                id="video-element-x"
+                value={x}
+                label="X coordinate (%)"
+                onChange={handleChangeX}
+                autoComplete="off"
+              />
+              <InputField
+                id="video-element-y"
+                value={y}
+                label="Y coordinate (%)"
+                onChange={handleChangeY}
+                autoComplete="off"
+              />
+            </Box>
+          </>
+        )}
+        <Box
+          sx={{
+            mt: mode === 'edit' ? 3 : 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 3,
+          }}
+        >
+          <InputField
+            id="video-element-width"
+            value={width}
+            label="Width (%)"
+            onChange={handleChangeWidth}
+            autoComplete="off"
           />
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 3,
-              mt: 3,
-            }}
-          >
-            <InputField
-              id="video-element-x"
-              value={x}
-              label="X coordinate (%)"
-              onChange={handleChangeX}
-              autoComplete="off"
-            />
-            <InputField
-              id="video-element-y"
-              value={y}
-              label="Y coordinate (%)"
-              onChange={handleChangeY}
-              autoComplete="off"
-            />
-          </Box>
-        </>
-      )}
-      <Box
-        sx={{
-          mt: mode === 'edit' ? 3 : 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 3,
-        }}
-      >
+          <InputField
+            id="video-element-height"
+            value={height}
+            label="Height (%)"
+            onChange={handleChangeHeight}
+            autoComplete="off"
+          />
+        </Box>
         <InputField
-          id="video-element-width"
-          value={width}
-          label="Width (%)"
-          onChange={handleChangeWidth}
+          id="video-element-url"
+          value={watchUrl}
+          label="Youtube URL"
+          onChange={handleChangeUrl}
           autoComplete="off"
+          sx={{
+            mt: 3,
+          }}
         />
-        <InputField
-          id="video-element-height"
-          value={height}
-          label="Height (%)"
-          onChange={handleChangeHeight}
-          autoComplete="off"
-        />
-      </Box>
-      <InputField
-        id="video-element-url"
-        value={watchUrl}
-        label="Youtube URL"
-        onChange={handleChangeUrl}
-        autoComplete="off"
-        sx={{
-          mt: 3,
-        }}
-      />
-      <Box
-        sx={{
-          mt: 3,
-        }}
-      >
-        <FormControl>
-          <FormLabel id="video-element-autoplay">Auto Play</FormLabel>
-          <RadioGroup
-            row
-            name="row-radio-buttons-group"
-            value={autoplay}
-            onChange={handleChangeAutoplay}
-          >
-            <FormControlLabel value="true" control={<Radio />} label="True" />
-            <FormControlLabel value="false" control={<Radio />} label="False" />
-          </RadioGroup>
-        </FormControl>
-      </Box>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        {mode === 'create' ? 'Create' : 'Save'}
-      </Button>
+        <Box
+          sx={{
+            mt: 3,
+          }}
+        >
+          <FormControl>
+            <FormLabel id="video-element-autoplay">Auto Play</FormLabel>
+            <RadioGroup
+              row
+              name="row-radio-buttons-group"
+              value={autoplay}
+              onChange={handleChangeAutoplay}
+            >
+              <FormControlLabel value="true" control={<Radio />} label="True" />
+              <FormControlLabel
+                value="false"
+                control={<Radio />}
+                label="False"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Box>
+        <Button
+          type='submit'
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 3 }}
+        >
+          {mode === 'create' ? 'Create' : 'Save'}
+        </Button>
+      </form>
     </Modal>
   );
 };
