@@ -36,11 +36,7 @@ const Presentation = () => {
   const [showCodeElementModal, setShowCodeElementModal] =
     useState<ElementModalMode>('close');
 
-  if (
-    !store.isLoading &&
-    (!Object.keys(store.store).includes(id) ||
-      store.store[id].slides.length <= paramSlideIndex)
-  ) {
+  if (!store.isLoading && !Object.keys(store.store).includes(id)) {
     toast.error('Invalud url');
     return <Navigate to="/dashboard" />;
   }

@@ -171,6 +171,7 @@ const ImageElementModal = ({
         await store.createSlideElement(id, slide.id, imgElement);
         onClose();
       } catch (err) {
+        console.log('err', err)
         toast.error('Fail to create image');
       }
     } else if (mode === 'edit') {

@@ -14,7 +14,7 @@ import {
   AutoAwesome as AutoAwesomeIcon,
 } from '@mui/icons-material';
 import { useStore } from '../../hooks/useStore';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 type SlideControlbarProps = {
@@ -31,6 +31,7 @@ export const SlideControlbar = ({
   const store = useStore();
   const presentation = store.store[id];
   const slidesLength = presentation?.slides.length || 0;
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const handleCreateSlide = async () => {
@@ -50,6 +51,7 @@ export const SlideControlbar = ({
       await store.deleteSlide(id, slideIndex);
       if (slideIndex !== 0) {
         setSlideIndex(slideIndex - 1);
+        navigate(`/presentations/${id}/${slideIndex - 1}`);
       }
     } catch (err) {
       toast.error('Fail to delete current slide');
@@ -57,13 +59,14 @@ export const SlideControlbar = ({
   };
 
   // TODO: add background feature
-
   const handleClickNextSlide = () => {
     setSlideIndex((idx) => idx + 1);
+    navigate(`/presentations/${id}/${slideIndex + 1}`);
   };
 
   const handleClickPrevSlide = () => {
     setSlideIndex((idx) => idx - 1);
+    navigate(`/presentations/${id}/${slideIndex - 1}`);
   };
 
   return (
@@ -110,7 +113,7 @@ export const SlideControlbar = ({
           </Button>
         </Tooltip>
         <Tooltip
-          title={<Typography variant="body2">Slide background</Typography>}
+          title={<Typography variant="body2">Slide setting</Typography>}
           placement="left"
         >
           <Button
