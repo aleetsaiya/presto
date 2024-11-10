@@ -27,7 +27,8 @@ export type ImageSlideElement = {
 export type VideoSlideElement = {
   width: number;
   height: number;
-  url: string;
+  embdedUrl: string;
+  watchUrl: string;
   autoplay: boolean;
   elementType: 'video';
 };

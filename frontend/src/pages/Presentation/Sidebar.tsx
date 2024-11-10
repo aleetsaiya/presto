@@ -32,6 +32,10 @@ type SidebarProps = {
     mode: ElementModalMode,
     focusElement?: string
   ) => void;
+  handleVideoElementModal: (
+    mode: ElementModalMode,
+    focusElement?: string
+  ) => void;
 };
 
 const Sidebar = ({
@@ -39,6 +43,7 @@ const Sidebar = ({
   handleShowEditModal,
   handleTextElementModal,
   handleImgElementModal,
+  handleVideoElementModal,
 }: SidebarProps) => {
   const store = useStore();
   const params = useParams();
@@ -52,6 +57,10 @@ const Sidebar = ({
 
   const handleShowImageModal = () => {
     handleImgElementModal('create');
+  };
+
+  const handleShowVideoModal = () => {
+    handleVideoElementModal('create');
   };
 
   const handleThumbnailUpload = async (
@@ -228,6 +237,7 @@ const Sidebar = ({
         >
           <Button
             size="large"
+            onClick={handleShowVideoModal}
             sx={{
               display: 'inline-flex',
               flexDirection: 'column',

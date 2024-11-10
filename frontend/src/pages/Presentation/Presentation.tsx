@@ -11,6 +11,7 @@ import SlideArea from './SlideArea';
 import EditPresentationModal from './EditPresentationModal';
 import TextElementModal from './TextElementModal';
 import ImageElementModal from './ImageElementModal';
+import VideoElementModal from './VideoElementModal';
 
 const Presentation = () => {
   const params = useParams();
@@ -21,6 +22,8 @@ const Presentation = () => {
   const [showTextElementModal, setShowTextElementModal] =
     useState<ElementModalMode>('close');
   const [showImgElementModal, setShowImgElementModal] =
+    useState<ElementModalMode>('close');
+  const [showVideoElementModal, setShowVideoElementModal] =
     useState<ElementModalMode>('close');
   const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
   const [editElementId, setEditElementId] = useState('');
@@ -70,7 +73,7 @@ const Presentation = () => {
 
   const handleCloseImgElementModal = () => {
     setShowImgElementModal('close');
-  }
+  };
 
   const handleImgElementModal = (
     mode: ElementModalMode,
@@ -80,6 +83,20 @@ const Presentation = () => {
       setEditElementId(focusElementId);
     }
     setShowImgElementModal(mode);
+  };
+
+  const handleCloseVideoElementModal = () => {
+    setShowVideoElementModal('close');
+  };
+
+  const handleVideoElementModal = (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => {
+    if (focusElementId) {
+      setEditElementId(focusElementId);
+    }
+    setShowVideoElementModal(mode);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -115,6 +132,11 @@ const Presentation = () => {
         elementId={editElementId}
         onClose={handleCloseImgElementModal}
       />
+      <VideoElementModal
+        mode={showVideoElementModal}
+        elementId={editElementId}
+        onClose={handleCloseVideoElementModal}
+      />
       <Box
         sx={{
           overflow: 'auto',
@@ -139,12 +161,14 @@ const Presentation = () => {
             handleShowEditModal={handleShowEditModal}
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
+            handleVideoElementModal={handleVideoElementModal}
           />
           <SlideArea
             slideIndex={slideIndex}
             setSlideIndex={setSlideIndex}
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
+            handleVideoElementModal={handleVideoElementModal}
           />
         </Box>
       </Box>

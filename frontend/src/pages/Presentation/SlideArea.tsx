@@ -18,6 +18,10 @@ type SlideAreaProps = {
     mode: ElementModalMode,
     focusElementId?: string
   ) => void;
+  handleVideoElementModal: (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => void;
 };
 
 let counterTimeoutId: number;
@@ -27,6 +31,7 @@ const SlideArea = ({
   setSlideIndex,
   handleTextElementModal,
   handleImgElementModal,
+  handleVideoElementModal,
 }: SlideAreaProps) => {
   const params = useParams();
   const id = params.id as string;
@@ -45,6 +50,8 @@ const SlideArea = ({
         handleTextElementModal('edit', elementId);
       } else if (type === 'image') {
         handleImgElementModal('edit', elementId);
+      } else if (type === 'video') {
+        handleVideoElementModal('edit', elementId);
       }
       clearTimeout(counterTimeoutId);
       setClickCounter(0);
@@ -94,12 +101,34 @@ const SlideArea = ({
             alt={element.alt}
           />
         );
+        containerStyles = {
+          border: `solid 1px ${theme.palette.nord.white[2]}`,
+        };
+      } else if (element.elementType === 'video') {
+        innerElement = (
+          <iframe
+            src={element.embdedUrl}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          />
+        );
+        containerStyles = {
+          border: `solid 5px ${theme.palette.nord.white[2]}`,
+        };
       }
       return (
         <Box
           key={element.id}
           onClick={() => handleClickElement(element.elementType, element.id)}
           onContextMenu={(e) => handleContextMenu(e, element.id)}
+          overflow="hidden"
           sx={{
             position: 'absolute',
             left: `${element.x}%`,

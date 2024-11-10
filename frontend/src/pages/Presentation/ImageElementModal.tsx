@@ -5,7 +5,6 @@ import {
   Typography,
   Button,
   Box,
-  useTheme,
   FormControl,
   FormLabel,
   RadioGroup,
@@ -172,7 +171,7 @@ const ImageElementModal = ({
         await store.createSlideElement(id, slide.id, imgElement);
         onClose();
       } catch (err) {
-        toast.error('Fail to create new image');
+        toast.error('Fail to create image');
       }
     } else if (mode === 'edit') {
       if (isNaN(xInt) || xInt < 0 || xInt > 100) {
@@ -198,7 +197,7 @@ const ImageElementModal = ({
         await store.updateSlideElement(id, slide.id, elementId, imgElement);
         onClose();
       } catch (err) {
-        toast.error('Fail to create new image');
+        toast.error('Fail to create image');
       }
     }
   };
