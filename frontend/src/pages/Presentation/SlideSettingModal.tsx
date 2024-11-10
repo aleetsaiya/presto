@@ -160,6 +160,156 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
         width: 600,
       }}
     >
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          Slide Theme
+        </Typography>
+        <FormControl
+          fullWidth
+          variant="standard"
+          sx={{
+            maxWidth: 150,
+          }}
+        >
+          <InputLabel id="code-element-language-label">Font Family</InputLabel>
+          <Select
+            labelId="code-element-languate-label"
+            id="code-element-language"
+            value={fontFamily}
+            label="Font Family"
+            onChange={handleChangeFontFamily}
+          >
+            <MenuItem value="Roboto">Roboto</MenuItem>
+            <MenuItem value="Sour Gummy">Sour Gummy</MenuItem>
+            <MenuItem value="PT Serif">PT Serif</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth sx={{ mt: 3 }}>
+          <FormLabel id="video-element-autoplay">Slide Background</FormLabel>
+          <RadioGroup
+            row
+            name="row-radio-buttons-group"
+            value={slideBackgroundType}
+            onChange={handleChangeSlideBackgroundType}
+          >
+            <FormControlLabel
+              value="solid-color"
+              control={<Radio />}
+              label="Solid Colour"
+            />
+            <FormControlLabel
+              value="gradient"
+              control={<Radio />}
+              label="Gradient colour"
+            />
+            <FormControlLabel value="image" control={<Radio />} label="Image" />
+          </RadioGroup>
+        </FormControl>
+        {slideBackgroundType === 'image' && (
+          <Box
+            sx={{
+              mt: 2.2,
+            }}
+          >
+            <FormControl>
+              <FormLabel id="img-element-img-type">Image Type</FormLabel>
+              <RadioGroup
+                row
+                name="row-radio-buttons-group"
+                value={imgBackgroundType}
+                onChange={handleChangeImgBackgroundType}
+              >
+                <FormControlLabel value="url" control={<Radio />} label="URL" />
+                <FormControlLabel
+                  value="base64"
+                  control={<Radio />}
+                  label="File Upload"
+                />
+              </RadioGroup>
+            </FormControl>
+            {imgBackgroundType === 'url' && (
+              <InputField
+                id="img-element-url"
+                value={imgUrl}
+                label="Image URL"
+                onChange={handleChangeImgUrl}
+                autoComplete="off"
+                sx={{
+                  mt: 1,
+                }}
+              />
+            )}
+            {imgBackgroundType === 'base64' && (
+              <Box>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  component="label"
+                  sx={{
+                    textTransform: 'none',
+                    mt: 1,
+                  }}
+                >
+                  Upload Image
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleImageUpload}
+                    accept="image/jpg, image/jpeg, image/png"
+                  />
+                </Button>
+              </Box>
+            )}
+          </Box>
+        )}
+        {slideBackgroundType === 'solid-color' && (
+          <Box
+            sx={{
+              mt: 2.5,
+            }}
+          >
+            <ColorInputField
+              id="text-element-color"
+              value={solidColor}
+              onChange={handleChangeSolidColor}
+              autoComplete="off"
+            />
+          </Box>
+        )}
+        {slideBackgroundType === 'gradient' && (
+          <Box
+            sx={{
+              mt: 2.5,
+            }}
+          >
+            <ColorInputField
+              id="code-element-gradient-from"
+              value={gradientFrom}
+              label="Gradient Colour From"
+              onChange={handleChangeGradientFrom}
+              autoComplete="off"
+            />
+            <ColorInputField
+              id="code-element-gradient-to"
+              value={gradientTo}
+              label="Gradient Colour To"
+              onChange={handleChangeGradientTo}
+              autoComplete="off"
+              sx={{
+                mt: 3,
+              }}
+            />
+          </Box>
+        )}
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 4 }}
+        >
+          Save
+        </Button>
+      </form>
     </Modal>
   );
 };
