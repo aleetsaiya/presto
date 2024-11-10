@@ -193,6 +193,108 @@ const VideoElementModal = ({
         width: 450,
       }}
     >
+      <Typography variant="h6" mb={2}>
+        {mode === 'create' ? 'Create' : 'Edit'} Video
+      </Typography>
+      {mode === 'edit' && (
+        <>
+          <iframe
+            src={embdedUrl}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            style={{
+              width: '100%',
+              maxHeight: '150px',
+            }}
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 3,
+              mt: 3,
+            }}
+          >
+            <InputField
+              id="video-element-x"
+              value={x}
+              label="X coordinate (%)"
+              onChange={handleChangeX}
+              autoComplete="off"
+            />
+            <InputField
+              id="video-element-y"
+              value={y}
+              label="Y coordinate (%)"
+              onChange={handleChangeY}
+              autoComplete="off"
+            />
+          </Box>
+        </>
+      )}
+      <Box
+        sx={{
+          mt: mode === 'edit' ? 3 : 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3,
+        }}
+      >
+        <InputField
+          id="video-element-width"
+          value={width}
+          label="Width (%)"
+          onChange={handleChangeWidth}
+          autoComplete="off"
+        />
+        <InputField
+          id="video-element-height"
+          value={height}
+          label="Height (%)"
+          onChange={handleChangeHeight}
+          autoComplete="off"
+        />
+      </Box>
+      <InputField
+        id="video-element-url"
+        value={watchUrl}
+        label="Youtube URL"
+        onChange={handleChangeUrl}
+        autoComplete="off"
+        sx={{
+          mt: 3,
+        }}
+      />
+      <Box
+        sx={{
+          mt: 3,
+        }}
+      >
+        <FormControl>
+          <FormLabel id="video-element-autoplay">Auto Play</FormLabel>
+          <RadioGroup
+            row
+            name="row-radio-buttons-group"
+            value={autoplay}
+            onChange={handleChangeAutoplay}
+          >
+            <FormControlLabel value="true" control={<Radio />} label="True" />
+            <FormControlLabel value="false" control={<Radio />} label="False" />
+          </RadioGroup>
+        </FormControl>
+      </Box>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleSubmit}
+        sx={{ mt: 3 }}
+      >
+        {mode === 'create' ? 'Create' : 'Save'}
+      </Button>
     </Modal>
   );
 };
