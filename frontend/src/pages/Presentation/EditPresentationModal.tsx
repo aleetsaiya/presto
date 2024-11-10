@@ -177,6 +177,140 @@ const EditPresentationModal = ({
             gap: 3,
           }}
         >
+          <InputField
+            id="edit-presentation-name"
+            value={title}
+            label="Title"
+            onChange={handleChangeTitle}
+            autoComplete="off"
+          />
+          <InputField
+            id="edit-presentation-description"
+            value={description}
+            label="Description"
+            onChange={handleChangeDescription}
+            autoComplete="off"
+          />
+        </Box>
+        <FormControl fullWidth sx={{ mt: 3 }}>
+          <FormLabel id="edit-presentation-setting-background">
+            Default Slide Background
+          </FormLabel>
+          <RadioGroup
+            row
+            name="row-radio-buttons-group"
+            value={slideBackgroundType}
+            onChange={handleChangeSlideBackgroundType}
+          >
+            <FormControlLabel
+              value="solid-color"
+              control={<Radio />}
+              label="Solid Colour"
+            />
+            <FormControlLabel
+              value="gradient"
+              control={<Radio />}
+              label="Gradient colour"
+            />
+            <FormControlLabel value="image" control={<Radio />} label="Image" />
+          </RadioGroup>
+        </FormControl>
+        {slideBackgroundType === 'image' && (
+          <Box
+            sx={{
+              mt: 2.2,
+            }}
+          >
+            <FormControl>
+              <FormLabel id="edit-presentation-setting-img-type">Image Type</FormLabel>
+              <RadioGroup
+                row
+                name="row-radio-buttons-group"
+                value={imgBackgroundType}
+                onChange={handleChangeImgBackgroundType}
+              >
+                <FormControlLabel value="url" control={<Radio />} label="URL" />
+                <FormControlLabel
+                  value="base64"
+                  control={<Radio />}
+                  label="File Upload"
+                />
+              </RadioGroup>
+            </FormControl>
+            {imgBackgroundType === 'url' && (
+              <InputField
+                id="edit-presentation-setting-background-url"
+                value={imgUrl}
+                label="Image URL"
+                onChange={handleChangeImgUrl}
+                autoComplete="off"
+                sx={{
+                  mt: 1,
+                }}
+              />
+            )}
+            {imgBackgroundType === 'base64' && (
+              <Box>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  component="label"
+                  sx={{
+                    textTransform: 'none',
+                    mt: 1,
+                  }}
+                >
+                  Upload Image
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleImageUpload}
+                    accept="image/jpg, image/jpeg, image/png"
+                  />
+                </Button>
+              </Box>
+            )}
+          </Box>
+        )}
+        {slideBackgroundType === 'solid-color' && (
+          <Box
+            sx={{
+              mt: 2.5,
+            }}
+          >
+            <ColorInputField
+              id="edit-presentation-setting-solid-color"
+              value={solidColor}
+              onChange={handleChangeSolidColor}
+              autoComplete="off"
+            />
+          </Box>
+        )}
+        {slideBackgroundType === 'gradient' && (
+          <Box
+            sx={{
+              mt: 2.5,
+            }}
+          >
+            <ColorInputField
+              id="edit-presentation-setting-gradient-from"
+              value={gradientFrom}
+              label="Gradient Colour From (hex)"
+              onChange={handleChangeGradientFrom}
+              autoComplete="off"
+            />
+            <ColorInputField
+              id="edit-presentation-setting-gradient-to"
+              value={gradientTo}
+              label="Gradient Colour To (hex)"
+              onChange={handleChangeGradientTo}
+              autoComplete="off"
+              sx={{
+                mt: 3,
+              }}
+            />
+          </Box>
+        )}
         <Button
           type="submit"
           variant="contained"
