@@ -1,0 +1,200 @@
+import { useState, useEffect } from 'react';
+import Modal from '../../components/Modal';
+import InputField from '../../components/InputField';
+import {
+  Typography,
+  Button,
+  Box,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+} from '@mui/material';
+import { useStore } from '../../hooks/useStore';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  SlideElementBase,
+  VideoSlideElement,
+} from '../../hooks/useStore.types';
+import { ElementModalMode } from './ElementModal.types';
+
+type VideoElementModalProps = {
+  mode: ElementModalMode;
+  onClose: () => void;
+  elementId: string;
+};
+
+const VideoElementModal = ({
+  mode,
+  onClose,
+  elementId,
+}: VideoElementModalProps) => {
+  const store = useStore();
+  const params = useParams();
+  const id = params.id as string;
+  const slideIndex = parseInt(params.slideIdx as string) as number;
+  const presentation = store.store[id];
+  const slide = presentation?.slides[slideIndex];
+  const [x, setX] = useState('');
+  const [y, setY] = useState('');
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
+  const [watchUrl, setWatchUrl] = useState('');
+  const [embdedUrl, setEmbdedUrl] = useState('');
+  const [autoplay, setAutoplay] = useState(false);
+
+  useEffect(() => {
+    if (!slide || mode === 'close') return;
+    if (mode === 'create') {
+      setX('');
+      setY('');
+      setWidth('');
+      setHeight('');
+      setWatchUrl('');
+      setEmbdedUrl('');
+      setAutoplay(false);
+    } else if (mode === 'edit') {
+      const element = slide.elements.find(
+        (ele) => ele.id === elementId
+      ) as VideoSlideElement & SlideElementBase;
+      if (element) {
+        setX(element.x.toString());
+        setY(element.y.toString());
+        setWidth(element.width.toString());
+        setHeight(element.height.toString());
+        setWatchUrl(element.watchUrl);
+        setEmbdedUrl(element.embdedUrl);
+        setAutoplay(element.autoplay);
+      }
+    }
+  }, [mode, slide, elementId]);
+
+  const handleChangeX = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setX(e.target.value);
+    }
+  };
+
+  const handleChangeY = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setY(e.target.value);
+    }
+  };
+
+  const handleChangeWidth = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setWidth(e.target.value);
+    }
+  };
+
+  const handleChangeHeight = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setHeight(e.target.value);
+    }
+  };
+
+  const handleChangeUrl = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setWatchUrl(e.target.value);
+  };
+
+  const handleChangeAutoplay = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAutoplay(e.target.value === 'true');
+  };
+
+  const toEmbdedUrl = (url: string) => {
+    if (url.includes(`youtube.com/embed/`)) {
+      return url;
+    }
+    const matches = url.match(/[?&]v=([^&]+)/);
+    if (matches) {
+      return `https://www.youtube.com/embed/${matches[1]}?`.concat(
+        autoplay ? '?autoplay=1&mute=1' : ''
+      );
+    } else {
+      return url.replace('watch?v=', 'embed/');
+    }
+  };
+
+  const handleSubmit = async () => {
+    const xInt = parseInt(x);
+    const yInt = parseInt(y);
+    const widthInt = parseInt(width);
+    const heightInt = parseInt(height);
+
+    if (isNaN(widthInt) || widthInt < 0 || widthInt > 100) {
+      toast.error('Invalid width');
+      return;
+    }
+    if (isNaN(heightInt) || heightInt < 0 || heightInt > 100) {
+      toast.error('Invalid height');
+      return;
+    }
+    if (mode === 'create') {
+      const videoElement: VideoSlideElement = {
+        width: widthInt,
+        height: heightInt,
+        watchUrl,
+        embdedUrl: toEmbdedUrl(watchUrl),
+        autoplay,
+        elementType: 'video',
+      };
+      try {
+        await store.createSlideElement(id, slide.id, videoElement);
+        onClose();
+      } catch (err) {
+        toast.error('Fail to create video');
+      }
+    } else if (mode === 'edit') {
+      if (isNaN(xInt) || xInt < 0 || xInt > 100) {
+        toast.error('Invalid x coordinate');
+        return;
+      }
+      if (isNaN(yInt) || yInt < 0 || yInt > 100) {
+        toast.error('Invalid y coordinate');
+        return;
+      }
+      const videoElement: VideoSlideElement & SlideElementBase = {
+        id: elementId,
+        x: xInt,
+        y: yInt,
+        width: widthInt,
+        height: heightInt,
+        watchUrl,
+        embdedUrl: toEmbdedUrl(watchUrl),
+        autoplay,
+        elementType: 'video',
+      };
+      try {
+        await store.updateSlideElement(id, slide.id, elementId, videoElement);
+        onClose();
+      } catch (err) {
+        toast.error('Fail to create video');
+      }
+    }
+  };
+
+  return (
+    <Modal
+      open={mode !== 'close'}
+      onClose={onClose}
+      modalContainerStyle={{
+        width: 450,
+      }}
+    >
+    </Modal>
+  );
+};
+
+export default VideoElementModal;
