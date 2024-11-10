@@ -35,7 +35,7 @@ const TextElementModal = ({
   const [color, setColor] = useState('');
 
   useEffect(() => {
-    if (!slide) return;
+    if (!slide || mode === 'close') return;
     if (mode === 'create') {
       setX('');
       setY('');
@@ -44,7 +44,7 @@ const TextElementModal = ({
       setText('');
       setFontSize('');
       setColor('');
-    } else {
+    } else if (mode === 'edit') {
       const element = slide.elements.find(
         (ele) => ele.id === elementId
       ) as TextSlideElement & SlideElementBase;
@@ -151,7 +151,7 @@ const TextElementModal = ({
         await store.createSlideElement(id, slide.id, textElement);
         onClose();
       } catch (err) {
-        toast.error('Fail to create text element');
+        toast.error('Fail to create new text');
       }
     } else if (mode === 'edit') {
       if (isNaN(xInt) || xInt < 0 || xInt > 100) {
@@ -177,7 +177,7 @@ const TextElementModal = ({
         await store.updateSlideElement(id, slide.id, elementId, textElement);
         onClose();
       } catch (err) {
-        toast.error('Fail to create text element');
+        toast.error('Fail to create new text');
       }
     }
   };

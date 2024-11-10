@@ -6,7 +6,6 @@ import {
   Theme,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useTheme } from '@mui/material';
 
 type ModalProps = {
   open: boolean;
@@ -23,8 +22,6 @@ const Modal = ({
   modalContainerStyle,
   contentContainerStyle,
 }: ModalProps) => {
-  const theme = useTheme();
-
   return (
     <MuiModal open={open} onClose={onClose}>
       <Box
@@ -32,14 +29,14 @@ const Modal = ({
           display: 'flex',
           flexDirection: 'column',
           position: 'absolute',
-          top: '40%',
+          top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           maxWidth: '90%',
           boxShadow: 8,
-          bgcolor: theme.palette.nord.white[1],
+          bgcolor: '#ffffff',
           p: 2,
-          ...modalContainerStyle
+          ...modalContainerStyle,
         }}
       >
         <IconButton

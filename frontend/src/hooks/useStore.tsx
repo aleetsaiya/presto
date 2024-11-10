@@ -178,8 +178,32 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
 
   const deleteSlideElement: StoreContextType['deleteSlideElement'] =
     useCallback(
-      (presentationId: string, slideId: string) => {
-        return Promise.resolve();
+      async (presentationId: string, slideId: string, elementId: string) => {
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) return Promise.reject();
+
+        const elementIndex = store[presentationId].slides[
+          slideIndex
+        ].elements.findIndex((ele) => ele.id === elementId);
+        if (elementIndex === -1) return Promise.reject();
+
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+        ];
+        newSlideElements.splice(elementIndex, 1);
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          });
       },
       [store]
     );

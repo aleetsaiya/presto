@@ -90,7 +90,8 @@ export type StoreContextType = {
   ) => Promise<void>;
   deleteSlideElement: (
     presentationId: string,
-    slideId: string
+    slideId: string,
+    elementId: string,
   ) => Promise<void>;
   updateSlideElement: <T extends SlideElements>(
     presentationId: string,

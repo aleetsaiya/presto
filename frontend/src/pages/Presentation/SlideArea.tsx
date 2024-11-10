@@ -5,11 +5,16 @@ import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { Slide, SlideElementsWithoutBase } from '../../hooks/useStore.types';
 import { ElementModalMode } from './ElementModal.types';
+import { toast } from 'react-toastify';
 
 type SlideAreaProps = {
   slideIndex: number;
   setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
   handleTextElementModal: (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => void;
+  handleImgElementModal: (
     mode: ElementModalMode,
     focusElementId?: string
   ) => void;
@@ -21,6 +26,7 @@ const SlideArea = ({
   slideIndex,
   setSlideIndex,
   handleTextElementModal,
+  handleImgElementModal,
 }: SlideAreaProps) => {
   const params = useParams();
   const id = params.id as string;
@@ -36,15 +42,26 @@ const SlideArea = ({
   ) => {
     if (clickCounter >= 1) {
       if (type === 'text') {
-        clearTimeout(counterTimeoutId);
         handleTextElementModal('edit', elementId);
+      } else if (type === 'image') {
+        handleImgElementModal('edit', elementId);
       }
+      clearTimeout(counterTimeoutId);
       setClickCounter(0);
     } else {
       setClickCounter((clickCounter) => clickCounter + 1);
       counterTimeoutId = setTimeout(() => {
         setClickCounter(0);
       }, 500);
+    }
+  };
+
+  const handleContextMenu = async (e: React.MouseEvent, elementId: string) => {
+    e.preventDefault();
+    try {
+      await store.deleteSlideElement(id, slides[slideIndex].id, elementId);
+    } catch (err) {
+      toast.error('Fail to delete element');
     }
   };
 
@@ -56,7 +73,7 @@ const SlideArea = ({
         innerElement = (
           <Typography
             sx={{
-              fontSize: element.fontSize,
+              fontSize: `${element.fontSize}em`,
               color: element.color,
             }}
           >
@@ -66,12 +83,23 @@ const SlideArea = ({
         containerStyles = {
           border: `solid 1px ${theme.palette.nord.white[2]}`,
         };
+      } else if (element.elementType === 'image') {
+        innerElement = (
+          <Box
+            component="img"
+            sx={{
+              width: '100%',
+            }}
+            src={element.img}
+            alt={element.alt}
+          />
+        );
       }
-      // TODO: double click to edit
       return (
         <Box
           key={element.id}
           onClick={() => handleClickElement(element.elementType, element.id)}
+          onContextMenu={(e) => handleContextMenu(e, element.id)}
           sx={{
             position: 'absolute',
             left: `${element.x}%`,
@@ -97,15 +125,18 @@ const SlideArea = ({
       >
         <Paper
           sx={{
+            userSelect: 'none',
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
             width: '95%',
-            height: '95%',
             overflowX: 'hidden',
-            maxWidth: 1000,
-            aspectRatio: '1.55/1',
+            maxWidth: {
+              md: 800,
+              xl: 1000,
+            },
+            aspectRatio: '1.37/1',
           }}
           elevation={2}
         >

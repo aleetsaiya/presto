@@ -11,6 +11,7 @@ import {
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { fileToBase64 } from '../../utils';
 import {
   Title as TitleIcon,
   ModeEdit as ModeEditIcon,
@@ -27,12 +28,17 @@ type SidebarProps = {
     mode: ElementModalMode,
     focusElement?: string
   ) => void;
+  handleImgElementModal: (
+    mode: ElementModalMode,
+    focusElement?: string
+  ) => void;
 };
 
 const Sidebar = ({
   width,
   handleShowEditModal,
   handleTextElementModal,
+  handleImgElementModal,
 }: SidebarProps) => {
   const store = useStore();
   const params = useParams();
@@ -40,25 +46,17 @@ const Sidebar = ({
   const presentation = store.store[id];
   const paddingHorizontal = 4;
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!validFileTypes.includes(file.type)) {
-      toast.error(`Invalid file type ${file.type}`);
-      return Promise.reject();
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    return new Promise<string>((resolve, reject) => {
-      reader.onerror = reject;
-      reader.onload = () => resolve(reader.result as string);
-    });
-  };
-
   const handleShowTextModal = () => {
     handleTextElementModal('create');
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleShowImageModal = () => {
+    handleImgElementModal('create');
+  };
+
+  const handleThumbnailUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (!e.target || !e.target.files) {
       return;
     }
@@ -160,7 +158,7 @@ const Sidebar = ({
           id="update-thumbnail"
           type="file"
           hidden
-          onChange={handleFileUpload}
+          onChange={handleThumbnailUpload}
           accept="image/jpg, image/jpeg, image/png"
         />
       </Box>
@@ -206,6 +204,7 @@ const Sidebar = ({
           </Button>
           <Button
             size="large"
+            onClick={handleShowImageModal}
             sx={{
               display: 'inline-flex',
               flexDirection: 'column',

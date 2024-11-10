@@ -10,6 +10,7 @@ import Sidebar from './Sidebar';
 import SlideArea from './SlideArea';
 import EditPresentationModal from './EditPresentationModal';
 import TextElementModal from './TextElementModal';
+import ImageElementModal from './ImageElementModal';
 
 const Presentation = () => {
   const params = useParams();
@@ -18,6 +19,8 @@ const Presentation = () => {
   const [showDeletePresModal, setShowDeletePresModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTextElementModal, setShowTextElementModal] =
+    useState<ElementModalMode>('close');
+  const [showImgElementModal, setShowImgElementModal] =
     useState<ElementModalMode>('close');
   const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
   const [editElementId, setEditElementId] = useState('');
@@ -65,6 +68,20 @@ const Presentation = () => {
     setShowTextElementModal(mode);
   };
 
+  const handleCloseImgElementModal = () => {
+    setShowImgElementModal('close');
+  }
+
+  const handleImgElementModal = (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => {
+    if (focusElementId) {
+      setEditElementId(focusElementId);
+    }
+    setShowImgElementModal(mode);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     if (key === 'ArrowRight' && slideIndex + 1 < (slides?.length || 0)) {
@@ -93,6 +110,11 @@ const Presentation = () => {
         elementId={editElementId}
         onClose={handleCloseTextElementModal}
       />
+      <ImageElementModal
+        mode={showImgElementModal}
+        elementId={editElementId}
+        onClose={handleCloseImgElementModal}
+      />
       <Box
         sx={{
           overflow: 'auto',
@@ -116,11 +138,13 @@ const Presentation = () => {
             width={280}
             handleShowEditModal={handleShowEditModal}
             handleTextElementModal={handleTextElementModal}
+            handleImgElementModal={handleImgElementModal}
           />
           <SlideArea
             slideIndex={slideIndex}
             setSlideIndex={setSlideIndex}
             handleTextElementModal={handleTextElementModal}
+            handleImgElementModal={handleImgElementModal}
           />
         </Box>
       </Box>
