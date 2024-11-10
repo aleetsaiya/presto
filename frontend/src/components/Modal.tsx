@@ -23,7 +23,7 @@ const Modal = ({
   contentContainerStyle,
 }: ModalProps) => {
   return (
-    <MuiModal open={open} onClose={onClose}>
+    <MuiModal open={open} onClose={onClose} disableRestoreFocus>
       <Box
         sx={{
           display: 'flex',

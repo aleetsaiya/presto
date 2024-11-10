@@ -16,13 +16,17 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
   const [description, setDescription] = useState('');
   const store = useStore();
 
-  const handleChangeName = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeName = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setName(e.target.value);
-  }
+  };
 
-  const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChangeDescription = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setDescription(e.target.value);
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +43,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
     } catch (err) {
       toast.error('Fail to create new presentation.');
     }
-  }
+  };
 
   return (
     <Modal
@@ -49,32 +53,34 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
         width: 400,
       }}
     >
-      <Typography variant="h6" mb={2}>
-        Create new presentation
-      </Typography>
-      <InputField
-        id="new-presentation-name"
-        label="Slide Name"
-        value={name}
-        onChange={handleChangeName}
-        sx={{ mb: 3 }}
-        autoComplete="off"
-      />
-      <InputField
-        id="new-presentation-description"
-        label="Description (optional)"
-        value={description}
-        onChange={handleChangeDescription}
-        autoComplete="off"
-      />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        Create
-      </Button>
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h6" mb={2}>
+          Create new presentation
+        </Typography>
+        <InputField
+          id="new-presentation-name"
+          label="Slide Name"
+          value={name}
+          onChange={handleChangeName}
+          sx={{ mb: 3 }}
+          autoComplete="off"
+        />
+        <InputField
+          id="new-presentation-description"
+          label="Description (optional)"
+          value={description}
+          onChange={handleChangeDescription}
+          autoComplete="off"
+        />
+        <Button
+          type='submit'
+          variant="contained"
+          color="secondary"
+          sx={{ mt: 3 }}
+        >
+          Create
+        </Button>
+      </form>
     </Modal>
   );
 };
