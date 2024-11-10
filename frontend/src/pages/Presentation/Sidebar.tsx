@@ -36,6 +36,10 @@ type SidebarProps = {
     mode: ElementModalMode,
     focusElement?: string
   ) => void;
+  handleCodeElementModal: (
+    mode: ElementModalMode,
+    focusElement?: string
+  ) => void;
 };
 
 const Sidebar = ({
@@ -44,6 +48,7 @@ const Sidebar = ({
   handleTextElementModal,
   handleImgElementModal,
   handleVideoElementModal,
+  handleCodeElementModal,
 }: SidebarProps) => {
   const store = useStore();
   const params = useParams();
@@ -62,6 +67,10 @@ const Sidebar = ({
   const handleShowVideoModal = () => {
     handleVideoElementModal('create');
   };
+
+  const handleShowCodeModal = () => {
+    handleCodeElementModal('create');
+  }
 
   const handleThumbnailUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -161,7 +170,7 @@ const Sidebar = ({
           size="small"
           component="label"
           htmlFor="update-thumbnail"
-          onClick={() => { }}
+          onClick={() => {}}
         />
         <input
           id="update-thumbnail"
@@ -252,6 +261,7 @@ const Sidebar = ({
           </Button>
           <Button
             size="large"
+            onClick={handleShowCodeModal}
             sx={{
               display: 'inline-flex',
               flexDirection: 'column',

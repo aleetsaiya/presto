@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import { Slide, SlideElementsWithoutBase } from '../../hooks/useStore.types';
 import { ElementModalMode } from './ElementModal.types';
 import { toast } from 'react-toastify';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 type SlideAreaProps = {
   slideIndex: number;
@@ -22,6 +24,10 @@ type SlideAreaProps = {
     mode: ElementModalMode,
     focusElementId?: string
   ) => void;
+  handleCodeElementModal: (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => void;
 };
 
 let counterTimeoutId: number;
@@ -32,6 +38,7 @@ const SlideArea = ({
   handleTextElementModal,
   handleImgElementModal,
   handleVideoElementModal,
+  handleCodeElementModal,
 }: SlideAreaProps) => {
   const params = useParams();
   const id = params.id as string;
@@ -52,6 +59,8 @@ const SlideArea = ({
         handleImgElementModal('edit', elementId);
       } else if (type === 'video') {
         handleVideoElementModal('edit', elementId);
+      } else if (type === 'code') {
+        handleCodeElementModal('edit', elementId);
       }
       clearTimeout(counterTimeoutId);
       setClickCounter(0);
@@ -80,6 +89,7 @@ const SlideArea = ({
         innerElement = (
           <Typography
             sx={{
+              userSelect: 'none',
               fontSize: `${element.fontSize}em`,
               color: element.color,
             }}
@@ -95,6 +105,7 @@ const SlideArea = ({
           <Box
             component="img"
             sx={{
+              userSelect: 'none',
               width: '100%',
             }}
             src={element.img}
@@ -116,12 +127,28 @@ const SlideArea = ({
             style={{
               width: '100%',
               height: '100%',
+              userSelect: 'none',
             }}
           />
         );
         containerStyles = {
           border: `solid 5px ${theme.palette.nord.white[2]}`,
         };
+      } else if (element.elementType === 'code') {
+        innerElement = (
+          <SyntaxHighlighter
+            language={element.language}
+            style={docco}
+            customStyle={{
+              padding: 0,
+              margin: 0,
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            {element.code}
+          </SyntaxHighlighter>
+        );
       }
       return (
         <Box
@@ -154,7 +181,6 @@ const SlideArea = ({
       >
         <Paper
           sx={{
-            userSelect: 'none',
             position: 'absolute',
             top: '50%',
             left: '50%',
@@ -176,7 +202,6 @@ const SlideArea = ({
               height: '100%',
               transition: 'all 0.3s',
               transform: `translateX(-${slideIndex * 100}%)`,
-              overflow: 'hidden',
             }}
           >
             {slides &&
@@ -188,6 +213,8 @@ const SlideArea = ({
                       width: '100%',
                       height: '100%',
                       flexShrink: '0',
+                      position: 'relative',
+                      overflow: 'hidden',
                     }}
                   >
                     {renderElements(slide)}

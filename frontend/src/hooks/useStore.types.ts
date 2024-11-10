@@ -39,6 +39,7 @@ export type CodeSlideElement = {
   code: string;
   fontSize: number;
   elementType: 'code';
+  language: 'c' | 'python' | 'javascript';
 };
 
 export type SlideElementsWithoutBase =

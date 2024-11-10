@@ -12,25 +12,29 @@ import EditPresentationModal from './EditPresentationModal';
 import TextElementModal from './TextElementModal';
 import ImageElementModal from './ImageElementModal';
 import VideoElementModal from './VideoElementModal';
+import CodeElementModal from './CodeElementModal';
 
 const Presentation = () => {
   const params = useParams();
   const id = params.id as string;
   const paramSlideIndex = parseInt(params.slideIdx as string) as number;
+  const store = useStore();
+  const navigate = useNavigate();
+  const presentation = store.store[id];
+  const slides = presentation?.slides;
+
   const [showDeletePresModal, setShowDeletePresModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
+  const [editElementId, setEditElementId] = useState('');
   const [showTextElementModal, setShowTextElementModal] =
     useState<ElementModalMode>('close');
   const [showImgElementModal, setShowImgElementModal] =
     useState<ElementModalMode>('close');
   const [showVideoElementModal, setShowVideoElementModal] =
     useState<ElementModalMode>('close');
-  const [slideIndex, setSlideIndex] = useState(paramSlideIndex || 0);
-  const [editElementId, setEditElementId] = useState('');
-  const store = useStore();
-  const navigate = useNavigate();
-  const presentation = store.store[id];
-  const slides = presentation?.slides;
+  const [showCodeElementModal, setShowCodeElementModal] =
+    useState<ElementModalMode>('close');
 
   if (
     !store.isLoading &&
@@ -99,6 +103,20 @@ const Presentation = () => {
     setShowVideoElementModal(mode);
   };
 
+  const handleCloseCodeElementModal = () => {
+    setShowCodeElementModal('close');
+  };
+
+  const handleCodeElementModal = (
+    mode: ElementModalMode,
+    focusElementId?: string
+  ) => {
+    if (focusElementId) {
+      setEditElementId(focusElementId);
+    }
+    setShowCodeElementModal(mode);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     if (key === 'ArrowRight' && slideIndex + 1 < (slides?.length || 0)) {
@@ -137,6 +155,11 @@ const Presentation = () => {
         elementId={editElementId}
         onClose={handleCloseVideoElementModal}
       />
+      <CodeElementModal
+        mode={showCodeElementModal}
+        elementId={editElementId}
+        onClose={handleCloseCodeElementModal}
+      />
       <Box
         sx={{
           overflow: 'auto',
@@ -162,6 +185,7 @@ const Presentation = () => {
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
             handleVideoElementModal={handleVideoElementModal}
+            handleCodeElementModal={handleCodeElementModal}
           />
           <SlideArea
             slideIndex={slideIndex}
@@ -169,6 +193,7 @@ const Presentation = () => {
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
             handleVideoElementModal={handleVideoElementModal}
+            handleCodeElementModal={handleCodeElementModal}
           />
         </Box>
       </Box>

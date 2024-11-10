@@ -53,7 +53,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
         Create new presentation
       </Typography>
       <InputField
-        id="new-presentation-input"
+        id="new-presentation-name"
         label="Slide Name"
         value={name}
         onChange={handleChangeName}
@@ -61,7 +61,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
         autoComplete="off"
       />
       <InputField
-        id="new-presentation-input"
+        id="new-presentation-description"
         label="Description (optional)"
         value={description}
         onChange={handleChangeDescription}
