@@ -91,6 +91,45 @@ const ImageElementModal = ({
     }
   };
 
+  const handleChangeY = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setY(e.target.value);
+    }
+  };
+
+  const handleChangeWidth = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setWidth(e.target.value);
+    }
+  };
+
+  const handleChangeHeight = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (/^[0-9]*$/.test(e.target.value)) {
+      setHeight(e.target.value);
+    }
+  };
+
+  const handleChangeImgType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImgType(e.target.value as UploadImageType);
+  };
+
+  const handleChangeUrl = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setUrl(e.target.value);
+  };
+
+  const handleChangeAlt = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setAlt(e.target.value);
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target || !e.target.files) {
@@ -172,6 +211,141 @@ const ImageElementModal = ({
         width: 450,
       }}
     >
+      <Typography variant="h6" mb={2}>
+        {mode === 'create' ? 'Create' : 'Edit'} Image
+      </Typography>
+      {mode === 'edit' && (
+        <>
+          <Box
+            component="img"
+            sx={{
+              width: '50%',
+              maxHeight: '150px',
+            }}
+            src={currentImg}
+            alt={alt}
+          />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 3,
+              mt: 3,
+            }}
+          >
+            <InputField
+              id="img-element-x"
+              value={x}
+              label="X coordinate (%)"
+              onChange={handleChangeX}
+              autoComplete="off"
+            />
+            <InputField
+              id="img-element-y"
+              value={y}
+              label="Y coordinate (%)"
+              onChange={handleChangeY}
+              autoComplete="off"
+            />
+          </Box>
+        </>
+      )}
+      <Box
+        sx={{
+          mt: mode === 'edit' ? 3 : 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 3,
+        }}
+      >
+        <InputField
+          id="img-element-width"
+          value={width}
+          label="Width (%)"
+          onChange={handleChangeWidth}
+          autoComplete="off"
+        />
+        <InputField
+          id="img-element-height"
+          value={height}
+          label="Height (%)"
+          onChange={handleChangeHeight}
+          autoComplete="off"
+        />
+      </Box>
+      <Box
+        sx={{
+          mt: 3,
+        }}
+      >
+        <FormControl>
+          <FormLabel id="img-element-img-type">Image Type</FormLabel>
+          <RadioGroup
+            row
+            name="row-radio-buttons-group"
+            value={imgType}
+            onChange={handleChangeImgType}
+          >
+            <FormControlLabel value="url" control={<Radio />} label="URL" />
+            <FormControlLabel
+              value="base64"
+              control={<Radio />}
+              label="File Upload"
+            />
+          </RadioGroup>
+        </FormControl>
+      </Box>
+      {imgType === 'url' && (
+        <InputField
+          id="img-element-url"
+          value={url}
+          label="Image URL"
+          onChange={handleChangeUrl}
+          autoComplete="off"
+          sx={{
+            mt: 1,
+          }}
+        />
+      )}
+      {imgType === 'base64' && (
+        <Button
+          variant="outlined"
+          size="small"
+          component="label"
+          sx={{
+            textTransform: 'none',
+            mt: 1,
+          }}
+        >
+          Upload Image
+          <input
+            type="file"
+            hidden
+            onChange={handleImageUpload}
+            accept="image/jpg, image/jpeg, image/png"
+          />
+        </Button>
+      )}
+      <InputField
+        id="img-element-alt"
+        value={alt}
+        label="Image Description"
+        onChange={handleChangeAlt}
+        autoComplete="off"
+        sx={{
+          mt: 3,
+        }}
+      />
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleSubmit}
+        sx={{ mt: 3 }}
+      >
+        {mode === 'create' ? 'Create' : 'Save'}
+      </Button>
     </Modal>
   );
 };
