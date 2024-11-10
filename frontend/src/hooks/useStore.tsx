@@ -19,7 +19,6 @@ const StoreContext = createContext<StoreContextType>({} as StoreContextType);
 
 export const StoreProvider = ({ children }: StoreProviderProps) => {
   const [store, setStore] = useState<Store>({});
-  /** isLoading will be true when haven't finish fetching data from backend */
   const [isLoading, setIsLoading] = useState(true);
 
   // Initialize store
@@ -36,6 +35,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
 
   const createPresentation = useCallback(
     async (id: string, name: string, description: string) => {
+      setIsLoading(true);
       const newStore = {
         ...store,
         [id]: {
@@ -58,6 +58,9 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         })
         .catch(() => {
           return Promise.reject();
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     },
     [store]
@@ -66,6 +69,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const deletePresentation = useCallback(
     async (id: string) => {
       // extract without target id
+      setIsLoading(true);
       const { [id]: _, ...newStore } = store;
       return setStoreApi(newStore)
         .then(() => {
@@ -74,13 +78,15 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         })
         .catch(() => {
           return Promise.reject();
-        });
+        })
+        .finally(() => setIsLoading(false));
     },
     [store]
   );
 
   const updatePresentation = useCallback(
     async (id: string, presentation: Presentation) => {
+      setIsLoading(true);
       const newStore = {
         ...store,
         [id]: presentation,
@@ -92,13 +98,15 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         })
         .catch(() => {
           return Promise.reject();
-        });
+        })
+        .finally(() => setIsLoading(false));
     },
     [store]
   );
 
   const createSlide = useCallback(
     async (presentationId: string) => {
+      setIsLoading(true);
       const newStore = {
         ...store,
         [presentationId]: {
@@ -116,13 +124,15 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         })
         .catch(() => {
           return Promise.reject();
-        });
+        })
+        .finally(() => setIsLoading(false));
     },
     [store]
   );
 
   const deleteSlide = useCallback(
     async (presentationId: string, slideIndex: number) => {
+      setIsLoading(true);
       const newStore = {
         ...store,
         [presentationId]: {
@@ -139,7 +149,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         })
         .catch(() => {
           return Promise.reject();
-        });
+        })
+        .finally(() => setIsLoading(false));
     },
     [store]
   );
@@ -147,10 +158,14 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const createSlideElement: StoreContextType['createSlideElement'] =
     useCallback(
       async (presentationId, slideId, element) => {
+        setIsLoading(true);
         const slideIndex = store[presentationId].slides.findIndex(
           (slide) => slide.id === slideId
         );
-        if (slideIndex === -1) return Promise.reject();
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
         const newElement = {
           id: uuidv4(),
           x: 0,
@@ -171,7 +186,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           })
           .catch(() => {
             return Promise.reject();
-          });
+          })
+          .finally(() => setIsLoading(false));
       },
       [store]
     );
@@ -179,15 +195,22 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const deleteSlideElement: StoreContextType['deleteSlideElement'] =
     useCallback(
       async (presentationId: string, slideId: string, elementId: string) => {
+        setIsLoading(true);
         const slideIndex = store[presentationId].slides.findIndex(
           (slide) => slide.id === slideId
         );
-        if (slideIndex === -1) return Promise.reject();
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
 
         const elementIndex = store[presentationId].slides[
           slideIndex
         ].elements.findIndex((ele) => ele.id === elementId);
-        if (elementIndex === -1) return Promise.reject();
+        if (elementIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
 
         const newSlideElements = [
           ...store[presentationId].slides[slideIndex].elements,
@@ -203,7 +226,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           })
           .catch(() => {
             return Promise.reject();
-          });
+          })
+          .finally(() => setIsLoading(false));
       },
       [store]
     );
@@ -211,15 +235,22 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
   const updateSlideElement: StoreContextType['updateSlideElement'] =
     useCallback(
       async (presentationId, slideId, elementId, element) => {
+        setIsLoading(true);
         const slideIndex = store[presentationId].slides.findIndex(
           (slide) => slide.id === slideId
         );
-        if (slideIndex === -1) return Promise.reject();
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
 
         const elementIndex = store[presentationId].slides[
           slideIndex
         ].elements.findIndex((ele) => ele.id === elementId);
-        if (elementIndex === -1) return Promise.reject();
+        if (elementIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
 
         const newSlideElements = [
           ...store[presentationId].slides[slideIndex].elements,
@@ -236,7 +267,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
           })
           .catch(() => {
             return Promise.reject();
-          });
+          })
+          .finally(() => setIsLoading(false));
       },
       [store]
     );
