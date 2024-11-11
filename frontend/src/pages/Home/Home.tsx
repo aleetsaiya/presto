@@ -1,6 +1,6 @@
 import Navbar from './Navbar';
 import { useAuth } from '../../hooks/useAuth';
-import { StoreProvider } from '../../hooks/useStore';
+import StoreProvider from '../../hooks/StoreProvider';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link, Container, Typography, Box } from '@mui/material';
 

@@ -1,4 +1,4 @@
-import { StoreProvider } from './hooks/useStore';
+import StoreProvider from './hooks/StoreProvider';
 import { useAuth } from './hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 
