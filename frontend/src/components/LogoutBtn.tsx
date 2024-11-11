@@ -17,6 +17,7 @@ const LogoutBtn = ({ sx }: LogoutBtnProps) => {
       store.clearLocalStore();
       toast.success('You have successfully log out');
     } catch (err) {
+      console.log('err', err);
       toast.error('Failed to logout');
     }
   };

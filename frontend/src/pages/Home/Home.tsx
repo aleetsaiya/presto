@@ -1,9 +1,13 @@
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import Navbar from './Navbar';
+import { useAuth } from '../../hooks/useAuth';
+import { StoreProvider } from '../../hooks/useStore';
+import { Link as RouterLink } from 'react-router-dom';
+import { Link, Container, Typography, Box } from '@mui/material';
 
 const Home = () => {
-  return (
+  const auth = useAuth();
+
+  const HomeComponents = (
     <>
       <Navbar />
       <Container
@@ -11,10 +15,29 @@ const Home = () => {
           mt: 7,
         }}
       >
-        <Typography variant="h3">Welcome to Presto!</Typography>
+        <Typography variant="h4" textAlign="center">
+          Welcome to Presto!
+        </Typography>
+        <Typography variant="h6" textAlign="center" mt={2}>
+          Haven't logged in?
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+          <Link to="/login" component={RouterLink}>
+            Login
+          </Link>
+          <Link to="signup" component={RouterLink}>
+            Signup
+          </Link>
+        </Box>
       </Container>
     </>
   );
+
+  if (auth.isLogin()) {
+    return <StoreProvider>{HomeComponents}</StoreProvider>;
+  } else {
+    return HomeComponents;
+  }
 };
 
 export default Home;

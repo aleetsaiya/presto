@@ -1,6 +1,5 @@
-import { Link, Typography, Toolbar, Box, AppBar } from '@mui/material';
+import { Link, Typography, Toolbar, AppBar } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import { SxProps } from '@mui/material';
 import { Theme } from '@mui/material';
 
@@ -19,8 +18,6 @@ const NavBar = ({
   children,
   normalFlow = true,
 }: NavbarProps) => {
-  const auth = useAuth();
-
   return (
     <>
       <AppBar
@@ -35,7 +32,7 @@ const NavBar = ({
           {brandElement || (
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               <Link
-                to={auth.isLogin() ? '/dashboard' : '/'}
+                to="/"
                 component={RouterLink}
                 sx={{
                   textDecoration: 'none',
