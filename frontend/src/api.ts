@@ -1,5 +1,5 @@
 import backendConfig from '../backend.config.json';
-import { Store } from './hooks/useStore';
+import { Store } from './hooks/useStore.types';
 import axios from 'axios';
 
 const getToken = () => JSON.parse(localStorage.getItem('token') || '');
