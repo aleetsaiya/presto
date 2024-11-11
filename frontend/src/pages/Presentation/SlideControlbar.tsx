@@ -12,20 +12,22 @@ import {
   AddCircle as AddCircleIcon,
   Delete as DeleteIcon,
   AutoAwesome as AutoAwesomeIcon,
+  Visibility as VisibilityIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import { useStore } from '../../hooks/useStore';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 type SlideControlbarProps = {
+  preview: boolean;
   slideIndex: number;
-  setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
   handleShowSlideSettingModal: () => void;
 };
 
 export const SlideControlbar = ({
+  preview,
   slideIndex,
-  setSlideIndex,
   handleShowSlideSettingModal,
 }: SlideControlbarProps) => {
   const params = useParams();
@@ -52,7 +54,6 @@ export const SlideControlbar = ({
     try {
       await store.deleteSlide(id, slideIndex);
       if (slideIndex !== 0) {
-        setSlideIndex(slideIndex - 1);
         navigate(`/presentations/${id}/${slideIndex - 1}`);
       }
     } catch (err) {
@@ -60,15 +61,28 @@ export const SlideControlbar = ({
     }
   };
 
-  // TODO: add background feature
+  const handleClickPreview = () => {
+    navigate(`/preview-presentations/${id}/${slideIndex}`);
+  };
+
+  const handleExitPreview = () => {
+    navigate(`/presentations/${id}/${slideIndex}`);
+  };
+
   const handleClickNextSlide = () => {
-    setSlideIndex((idx) => idx + 1);
-    navigate(`/presentations/${id}/${slideIndex + 1}`);
+    if (preview) {
+      navigate(`/preview-presentations/${id}/${slideIndex + 1}`);
+    } else {
+      navigate(`/presentations/${id}/${slideIndex + 1}`);
+    }
   };
 
   const handleClickPrevSlide = () => {
-    setSlideIndex((idx) => idx - 1);
-    navigate(`/presentations/${id}/${slideIndex - 1}`);
+    if (preview) {
+      navigate(`/preview-presentations/${id}/${slideIndex - 1}`);
+    } else {
+      navigate(`/presentations/${id}/${slideIndex - 1}`);
+    }
   };
 
   return (
@@ -78,7 +92,6 @@ export const SlideControlbar = ({
         right: '0',
         width: '10%',
         height: '100%',
-        // TODO: hidden as default with mobile, can toggle
         p: 1,
       }}
     >
@@ -94,76 +107,125 @@ export const SlideControlbar = ({
           background: `${theme.palette.nord.black[0]}60`,
         }}
       >
-        <Tooltip
-          title={<Typography variant="body2">Delete slide</Typography>}
-          placement="left"
-        >
-          <Button
-            onClick={handleDeleteSlide}
-            sx={{
-              minWidth: '40px',
-              '&:hover': {
-                background: `${theme.palette.nord.black[0]}`,
-              },
-            }}
+        {preview && (
+          <Tooltip
+            title={<Typography variant="body2">Exit Preview</Typography>}
+            placement="left"
           >
-            <DeleteIcon
+            <Button
+              onClick={handleExitPreview}
               sx={{
-                color: theme.palette.nord.white[0],
-              }}
-            />
-          </Button>
-        </Tooltip>
-        <Tooltip
-          title={<Typography variant="body2">Slide theme</Typography>}
-          placement="left"
-        >
-          <Button
-            onClick={handleShowSlideSettingModal}
-            sx={{
-              minWidth: '40px',
-              '&:hover': {
-                background: `${theme.palette.nord.black[0]}`,
-              },
-            }}
-          >
-            <AutoAwesomeIcon
-              sx={{
-                color: theme.palette.nord.white[1],
-              }}
-            />
-          </Button>
-        </Tooltip>
-      </Box>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          right: '5px',
-          transform: 'translateY(-50%)',
-        }}
-      >
-        <Tooltip
-          placement="left"
-          title={<Typography variant="body2">Add new slide</Typography>}
-        >
-          <IconButton
-            onClick={handleCreateSlide}
-            sx={{
-              color: `${theme.palette.nord.black[0]}60`,
-            }}
-          >
-            <AddCircleIcon
-              sx={{
-                fontSize: 50,
+                minWidth: '40px',
                 '&:hover': {
-                  color: theme.palette.nord.black[0],
+                  background: `${theme.palette.nord.black[0]}`,
                 },
               }}
-            />
-          </IconButton>
-        </Tooltip>
+            >
+              <CloseIcon
+                sx={{
+                  color: theme.palette.nord.white[0],
+                }}
+              />
+            </Button>
+          </Tooltip>
+        )}
+        {!preview && (
+          <>
+            <Tooltip
+              title={<Typography variant="body2">Delete slide</Typography>}
+              placement="left"
+            >
+              <Button
+                onClick={handleDeleteSlide}
+                sx={{
+                  minWidth: '40px',
+                  '&:hover': {
+                    background: `${theme.palette.nord.black[0]}`,
+                  },
+                }}
+              >
+                <DeleteIcon
+                  sx={{
+                    color: theme.palette.nord.white[0],
+                  }}
+                />
+              </Button>
+            </Tooltip>
+            <Tooltip
+              title={<Typography variant="body2">Slide theme</Typography>}
+              placement="left"
+            >
+              <Button
+                onClick={handleShowSlideSettingModal}
+                sx={{
+                  minWidth: '40px',
+                  '&:hover': {
+                    background: `${theme.palette.nord.black[0]}`,
+                  },
+                }}
+              >
+                <AutoAwesomeIcon
+                  sx={{
+                    color: theme.palette.nord.white[1],
+                  }}
+                />
+              </Button>
+            </Tooltip>
+            <Tooltip
+              title={<Typography variant="body2">Preview</Typography>}
+              placement="left"
+            >
+              <Button
+                onClick={handleClickPreview}
+                sx={{
+                  minWidth: '40px',
+                  '&:hover': {
+                    background: `${theme.palette.nord.black[0]}`,
+                  },
+                }}
+              >
+                <VisibilityIcon
+                  sx={{
+                    color: theme.palette.nord.white[1],
+                  }}
+                />
+              </Button>
+            </Tooltip>
+          </>
+        )}
       </Box>
+
+      {!preview && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: '5px',
+            transform: 'translateY(-50%)',
+          }}
+        >
+          <Tooltip
+            placement="left"
+            title={<Typography variant="body2">Add new slide</Typography>}
+          >
+            <IconButton
+              onClick={handleCreateSlide}
+              sx={{
+                color: `${theme.palette.nord.black[0]}60`,
+              }}
+            >
+              <AddCircleIcon
+                sx={{
+                  fontSize: 50,
+                  '&:hover': {
+                    color: theme.palette.nord.black[0],
+                  },
+                }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -197,7 +259,6 @@ export const SlideControlbar = ({
           <KeyboardArrowRightIcon
             sx={{
               fontSize: 45,
-
               '&:hover': {
                 color: theme.palette.nord.black[0],
               },
