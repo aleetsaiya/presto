@@ -47,7 +47,15 @@ export const router = createBrowserRouter([
         path: '/presentations/:id/:slideIdx',
         element: (
           <ProtectedRoute>
-            <Presentation />
+            <Presentation preview={false} />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/preview-presentations/:id/:slideIdx',
+        element: (
+          <ProtectedRoute>
+            <Presentation preview={true} />
           </ProtectedRoute>
         ),
       },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, Paper, useTheme } from '@mui/material';
 import SlideControlbar from './SlideControlbar';
 import { useStore } from '../../hooks/useStore';
@@ -10,8 +10,9 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 type SlideAreaProps = {
+  preview: boolean;
   slideIndex: number;
-  setSlideIndex: React.Dispatch<React.SetStateAction<number>>;
+  showControlbar: boolean;
   handleShowSlideSettingModal: () => void;
   handleTextElementModal: (
     mode: ElementModalMode,
@@ -32,10 +33,12 @@ type SlideAreaProps = {
 };
 
 let counterTimeoutId: number;
+let resizeEventTimeoutId: number;
 
 const SlideArea = ({
+  preview,
   slideIndex,
-  setSlideIndex,
+  showControlbar,
   handleShowSlideSettingModal,
   handleTextElementModal,
   handleImgElementModal,
@@ -46,9 +49,28 @@ const SlideArea = ({
   const id = params.id as string;
   const store = useStore();
   const [clickCounter, setClickCounter] = useState(0);
+  const [viewportAspectRatio, setViewportAspectRatio] = useState(
+    `${window.innerWidth.toFixed(2)}/${window.innerHeight.toFixed(2)}`
+  );
   const presentation = store.store[id];
   const slides = presentation?.slides;
   const theme = useTheme();
+
+  useEffect(() => {
+    const hadnleResize = () => {
+      setViewportAspectRatio(
+        `${window.innerWidth.toFixed(2)}/${window.innerHeight.toFixed(2)}`
+      );
+    };
+    const throttledHandleResize = () => {
+      clearTimeout(resizeEventTimeoutId);
+      resizeEventTimeoutId = setTimeout(hadnleResize, 100);
+    };
+    window.addEventListener('resize', throttledHandleResize);
+    return () => {
+      window.removeEventListener('resize', throttledHandleResize);
+    };
+  }, []);
 
   const handleClickElement = (
     type: SlideElementsWithoutBase['elementType'],
@@ -110,7 +132,7 @@ const SlideArea = ({
         innerElement = (
           <Typography
             sx={{
-              userSelect: 'none',
+              userSelect: preview ? 'unset' : 'none',
               fontSize: `${element.fontSize}em`,
               color: element.color,
               fontFamily: 'inherit',
@@ -171,11 +193,22 @@ const SlideArea = ({
           </SyntaxHighlighter>
         );
       }
+      if (preview) {
+        containerStyles = {
+          cursor: 'unset',
+        };
+      }
       return (
         <Box
           key={element.id}
-          onClick={() => handleClickElement(element.elementType, element.id)}
-          onContextMenu={(e) => handleContextMenu(e, element.id)}
+          onClick={
+            preview
+              ? undefined
+              : () => handleClickElement(element.elementType, element.id)
+          }
+          onContextMenu={
+            preview ? undefined : (e) => handleContextMenu(e, element.id)
+          }
           overflow="hidden"
           sx={{
             position: 'absolute',
@@ -202,17 +235,24 @@ const SlideArea = ({
       >
         <Paper
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '95%',
+            position: preview ? 'fixed' : 'absolute',
+            top: preview ? '0%' : '50%',
+            left: preview ? '0%' : '50%',
+            transform: preview ? 'unset' : 'translate(-50%, -50%)',
+            width: '100%',
             overflowX: 'hidden',
-            maxWidth: {
-              md: 800,
-              xl: 1000,
-            },
-            aspectRatio: '1.37/1',
+            maxWidth: preview
+              ? 'unset'
+              : {
+                md: 800,
+                xl: 1000,
+              },
+            maxHeight:
+              !preview && window.innerHeight > window.innerWidth
+                ? '80%'
+                : 'unset',
+            aspectRatio: viewportAspectRatio,
+            borderRadius: preview ? 0 : 1,
           }}
           elevation={2}
         >
@@ -241,29 +281,31 @@ const SlideArea = ({
                     }}
                   >
                     {renderElements(slide)}
+                    <Typography
+                      sx={{
+                        fontSize: '1em',
+                        position: 'absolute',
+                        bottom: '3%',
+                        left: '20px',
+                      }}
+                    >
+                      {presentation?.slides.length === 1
+                        ? '1'
+                        : `${slideIndex + 1}/${presentation?.slides.length}`}
+                    </Typography>
                   </Box>
                 );
               })}
           </Box>
-          <Typography
-            sx={{
-              fontSize: '1em',
-              position: 'absolute',
-              bottom: '3%',
-              left: '20px',
-            }}
-          >
-            {presentation?.slides.length === 1
-              ? '1'
-              : `${slideIndex + 1}/${presentation?.slides.length}`}
-          </Typography>
         </Paper>
       </Box>
-      <SlideControlbar
-        slideIndex={slideIndex}
-        setSlideIndex={setSlideIndex}
-        handleShowSlideSettingModal={handleShowSlideSettingModal}
-      />
+      {showControlbar && (
+        <SlideControlbar
+          preview={preview}
+          slideIndex={slideIndex}
+          handleShowSlideSettingModal={handleShowSlideSettingModal}
+        />
+      )}
     </>
   );
 };

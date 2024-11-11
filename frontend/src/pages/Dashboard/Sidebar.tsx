@@ -9,9 +9,12 @@ import {
   Toolbar,
   Typography,
   Chip,
+  Tooltip,
+  useTheme,
 } from '@mui/material';
 import SlideshowIcon from '@mui/icons-material/SlideshowRounded';
 import { useStore } from '../../hooks/useStore';
+import { useNavigate } from 'react-router-dom';
 
 type SidebarProps = {
   onClick: (id: string) => void;
@@ -21,10 +24,20 @@ const sidebarWidth = 280;
 
 const Sidebar = ({ onClick }: SidebarProps) => {
   const store = useStore();
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   const ids = Object.keys(store.store);
   // sort id by created time, the newest will be at the top
   ids.sort((a, b) => store.store[b].createAt - store.store[a].createAt);
+
+  const handleClickPreview = (
+    e: React.MouseEvent<HTMLDivElement>,
+    id: string
+  ) => {
+    e.stopPropagation();
+    navigate(`/preview-presentations/${id}/0`);
+  };
 
   return (
     <Drawer
@@ -73,8 +86,16 @@ const Sidebar = ({ onClick }: SidebarProps) => {
                 onClick={() => onClick(id)}
               >
                 <ListItemButton>
-                  <ListItemIcon>
-                    <SlideshowIcon />
+                  <ListItemIcon onClick={(e) => handleClickPreview(e, id)}>
+                    <Tooltip title="preview" placement="top">
+                      <SlideshowIcon
+                        sx={{
+                          '&:hover': {
+                            color: theme.palette.nord.orange,
+                          },
+                        }}
+                      />
+                    </Tooltip>
                   </ListItemIcon>
                   <ListItemText primary={presentation.name} />
                 </ListItemButton>

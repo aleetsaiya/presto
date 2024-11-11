@@ -18,11 +18,14 @@ import {
   Image as ImageIcon,
   Videocam as VideocamIcon,
   Code as CodeIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material';
 import { ElementModalMode } from './ElementModal.types';
 
 type SidebarProps = {
   width: number;
+  showInMobile: boolean;
+  onClose: () => void;
   handleShowEditModal: () => void;
   handleTextElementModal: (
     mode: ElementModalMode,
@@ -44,6 +47,8 @@ type SidebarProps = {
 
 const Sidebar = ({
   width,
+  showInMobile,
+  onClose,
   handleShowEditModal,
   handleTextElementModal,
   handleImgElementModal,
@@ -70,7 +75,7 @@ const Sidebar = ({
 
   const handleShowCodeModal = () => {
     handleCodeElementModal('create');
-  }
+  };
 
   const handleThumbnailUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -90,21 +95,25 @@ const Sidebar = ({
     }
   };
 
-  // TODO: temporary drawer variant to make it responsive
   return (
     <Drawer
       variant="permanent"
       sx={{
         display: {
-          sm: 'none',
-          xs: 'none',
+          xs: showInMobile ? 'block' : 'none',
           md: 'block',
         },
-        width: width,
+        width: {
+          xs: '100%',
+          md: width,
+        },
         flexShrink: 0,
         borderRight: 'solid 1px #e7e7e7',
         [`& .MuiDrawer-paper`]: {
-          width: width,
+          width: {
+            xs: '100%',
+            md: width,
+          },
           boxSizing: 'border-box',
           border: 'none',
           backgroundColor: 'inherit',
@@ -122,6 +131,19 @@ const Sidebar = ({
         <Typography variant="h6" textAlign="center" component="h2">
           {presentation?.name || ''}
         </Typography>
+        {showInMobile && (
+          <IconButton
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '15px',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
         <IconButton
           size="small"
           onClick={handleShowEditModal}
@@ -158,6 +180,7 @@ const Sidebar = ({
             alt="presentation-thumbnail"
             sx={{
               width: '100%',
+              maxWidth: '250px',
               borderRadius: 2,
             }}
           />
@@ -170,7 +193,7 @@ const Sidebar = ({
           size="small"
           component="label"
           htmlFor="update-thumbnail"
-          onClick={() => {}}
+          onClick={() => { }}
         />
         <input
           id="update-thumbnail"
