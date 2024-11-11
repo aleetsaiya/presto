@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { useStore } from '../../hooks/useStore';
@@ -15,7 +15,11 @@ import VideoElementModal from './VideoElementModal';
 import CodeElementModal from './CodeElementModal';
 import SlideSettingModal from './SlideSettingModal';
 
-const Presentation = () => {
+type PresentationProps = {
+  preview: boolean;
+};
+
+const Presentation = ({ preview }: PresentationProps) => {
   const params = useParams();
   const id = params.id as string;
   const paramSlideIndex = parseInt(params.slideIdx as string) as number;
@@ -24,6 +28,7 @@ const Presentation = () => {
   const presentation = store.store[id];
   const slides = presentation?.slides;
 
+  const [showSidebar, setShowSidebar] = useState(false);
   const [showDeletePresModal, setShowDeletePresModal] = useState(false);
   const [showSlideSettingModal, setShowSlideSettingModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -38,7 +43,14 @@ const Presentation = () => {
   const [showCodeElementModal, setShowCodeElementModal] =
     useState<ElementModalMode>('close');
 
-  if (!store.isLoading && !Object.keys(store.store).includes(id)) {
+  useEffect(() => {
+    setSlideIndex(paramSlideIndex);
+  }, [paramSlideIndex]);
+
+  if (
+    !store.isLoading &&
+    (!Object.keys(store.store).includes(id) || paramSlideIndex >= slides.length)
+  ) {
     toast.error('Invalud url');
     return <Navigate to="/dashboard" />;
   }
@@ -123,53 +135,72 @@ const Presentation = () => {
     setShowCodeElementModal(mode);
   };
 
+  const handleShowSidebar = () => {
+    setShowSidebar(true);
+  };
+
+  const handleCloseSidebar = () => {
+    setShowSidebar(false);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const key = e.key;
     if (key === 'ArrowRight' && slideIndex + 1 < (slides?.length || 0)) {
-      setSlideIndex((slideIndex) => slideIndex + 1);
-      navigate(`/presentations/${id}/${slideIndex + 1}`);
+      if (preview) {
+        navigate(`/preview-presentations/${id}/${slideIndex + 1}`);
+      } else {
+        navigate(`/presentations/${id}/${slideIndex + 1}`);
+      }
+
       return;
     }
     if (key === 'ArrowLeft' && slideIndex > 0) {
-      setSlideIndex((slideIndex) => slideIndex - 1);
-      navigate(`/presentations/${id}/${slideIndex - 1}`);
+      if (preview) {
+        navigate(`/preview-presentations/${id}/${slideIndex - 1}`);
+      } else {
+        navigate(`/presentations/${id}/${slideIndex - 1}`);
+      }
       return;
     }
   };
   return (
     <>
-      <DeletePresentationModal
-        open={showDeletePresModal}
-        onClose={handleCloseDeletePresModal}
-      />
-      <EditPresentationModal
-        open={showEditModal}
-        onClose={handleCloseEditModal}
-      />
-      <TextElementModal
-        mode={showTextElementModal}
-        elementId={editElementId}
-        onClose={handleCloseTextElementModal}
-      />
-      <ImageElementModal
-        mode={showImgElementModal}
-        elementId={editElementId}
-        onClose={handleCloseImgElementModal}
-      />
-      <VideoElementModal
-        mode={showVideoElementModal}
-        elementId={editElementId}
-        onClose={handleCloseVideoElementModal}
-      />
-      <CodeElementModal
-        mode={showCodeElementModal}
-        elementId={editElementId}
-        onClose={handleCloseCodeElementModal}
-      />
-      <SlideSettingModal
-        open={showSlideSettingModal}
-        onClose={handleCloseSlideSettingModal}
-      />
+      {!preview && (
+        <>
+          <DeletePresentationModal
+            open={showDeletePresModal}
+            onClose={handleCloseDeletePresModal}
+          />
+          <EditPresentationModal
+            open={showEditModal}
+            onClose={handleCloseEditModal}
+          />
+          <TextElementModal
+            mode={showTextElementModal}
+            elementId={editElementId}
+            onClose={handleCloseTextElementModal}
+          />
+          <ImageElementModal
+            mode={showImgElementModal}
+            elementId={editElementId}
+            onClose={handleCloseImgElementModal}
+          />
+          <VideoElementModal
+            mode={showVideoElementModal}
+            elementId={editElementId}
+            onClose={handleCloseVideoElementModal}
+          />
+          <CodeElementModal
+            mode={showCodeElementModal}
+            elementId={editElementId}
+            onClose={handleCloseCodeElementModal}
+          />
+          <SlideSettingModal
+            open={showSlideSettingModal}
+            onClose={handleCloseSlideSettingModal}
+          />
+        </>
+      )}
       <Box
         sx={{
           overflow: 'auto',
@@ -181,7 +212,12 @@ const Presentation = () => {
         onKeyDown={handleKeyDown}
         tabIndex={0}
       >
-        <Navbar onDeletePresentation={handleShowDeletePresModal} />
+        {!preview && (
+          <Navbar
+            handleShowSidebar={handleShowSidebar}
+            onDeletePresentation={handleShowDeletePresModal}
+          />
+        )}
         <Box
           sx={{
             display: 'flex',
@@ -189,17 +225,22 @@ const Presentation = () => {
             position: 'relative',
           }}
         >
-          <Sidebar
-            width={280}
-            handleShowEditModal={handleShowEditModal}
-            handleTextElementModal={handleTextElementModal}
-            handleImgElementModal={handleImgElementModal}
-            handleVideoElementModal={handleVideoElementModal}
-            handleCodeElementModal={handleCodeElementModal}
-          />
+          {!preview && (
+            <Sidebar
+              width={280}
+              showInMobile={showSidebar}
+              onClose={handleCloseSidebar}
+              handleShowEditModal={handleShowEditModal}
+              handleTextElementModal={handleTextElementModal}
+              handleImgElementModal={handleImgElementModal}
+              handleVideoElementModal={handleVideoElementModal}
+              handleCodeElementModal={handleCodeElementModal}
+            />
+          )}
           <SlideArea
+            preview={preview}
             slideIndex={slideIndex}
-            setSlideIndex={setSlideIndex}
+            showControlbar={!showSidebar}
             handleShowSlideSettingModal={handleShowSlideSettingModal}
             handleTextElementModal={handleTextElementModal}
             handleImgElementModal={handleImgElementModal}
