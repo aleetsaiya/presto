@@ -46,6 +46,9 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         id: uuidv4(),
         elements: [],
         fontFamily: 'Roboto',
+        background: {
+          'type': 'default',
+        }
       };
       const newStore = {
         ...store,
@@ -118,6 +121,9 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         id: uuidv4(),
         elements: [],
         fontFamily: 'Roboto',
+        background: {
+          type: 'default',
+        }
       };
       const newStore = {
         ...store,

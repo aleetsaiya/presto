@@ -205,7 +205,7 @@ const EditPresentationModal = ({
             <FormControlLabel
               value="solid-color"
               control={<Radio />}
-              label="Solid Colour"
+              label="Solid colour"
             />
             <FormControlLabel
               value="gradient"

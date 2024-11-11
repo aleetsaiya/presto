@@ -41,7 +41,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
   const slide = presentation?.slides[slideIndex];
 
   const [slideBackgroundType, setSlideBackgroundType] =
-    useState<Background['type']>('solid-color');
+    useState<Slide['background']['type']>('default');
   const [fontFamily, setFontFamily] = useState<FontFamily>('Roboto');
   const [solidColor, setSolidColor] = useState('');
   const [gradientFrom, setGradientFrom] = useState('');
@@ -54,29 +54,11 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
   useEffect(() => {
     if (!slide) return;
     setFontFamily(slide.fontFamily);
-    if (!slide.background) {
-      setSlideBackgroundType(presentation.background.type);
-      const backgroundType = presentation.background.type;
-      if (backgroundType === 'image') {
-        if (presentation.background.imgType === 'url') {
-          setImgUrl(presentation.background.img);
-          setImgBase64('');
-        } else {
-          setImgUrl('');
-          setImgBase64(presentation.background.img);
-        }
-        setImgBackgroundType(presentation.background.imgType);
-      } else if (backgroundType === 'gradient') {
-        setGradientTo(presentation.background.gradientColorTo);
-        setGradientFrom(presentation.background.gradientColorFrom);
-      } else if (backgroundType === 'solid-color') {
-        setSolidColor(presentation.background.solidColor);
-      }
+    setSlideBackgroundType(slide.background.type);
+    if (slide.background.type === 'default') {
       return;
     }
-    const backgroundType = slide.background.type;
-    setSlideBackgroundType(backgroundType);
-    if (backgroundType === 'image') {
+    if (slide.background.type === 'image') {
       if (slide.background.imgType === 'url') {
         setImgUrl(slide.background.img);
         setImgBase64('');
@@ -85,16 +67,16 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
         setImgBase64(slide.background.img);
       }
       setImgBackgroundType(slide.background.imgType);
-    } else if (backgroundType === 'gradient') {
+    } else if (slide.background.type === 'gradient') {
       setGradientTo(slide.background.gradientColorTo);
       setGradientFrom(slide.background.gradientColorFrom);
-    } else if (backgroundType === 'solid-color') {
+    } else if (slide.background.type === 'solid-color') {
       setSolidColor(slide.background.solidColor);
     }
   }, [slide]);
 
   const handleChangeSlideBackgroundType = (e: SelectChangeEvent) => {
-    setSlideBackgroundType(e.target.value as Background['type']);
+    setSlideBackgroundType(e.target.value as Slide['background']['type']);
   };
 
   const handleChangeFontFamily = (e: SelectChangeEvent) => {
@@ -145,8 +127,13 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    let background: Background;
-    if (slideBackgroundType === 'image') {
+    let background: Slide['background'];
+    if (slideBackgroundType === 'default') {
+      background = {
+        type: 'default',
+      };
+    }
+    else if (slideBackgroundType === 'image') {
       background = {
         type: 'image',
         img: imgBackgroundType === 'base64' ? imgBase64 : imgUrl,
@@ -220,9 +207,14 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
             onChange={handleChangeSlideBackgroundType}
           >
             <FormControlLabel
+              value="default"
+              control={<Radio />}
+              label="Default"
+            />
+            <FormControlLabel
               value="solid-color"
               control={<Radio />}
-              label="Solid Colour"
+              label="Solid colour"
             />
             <FormControlLabel
               value="gradient"

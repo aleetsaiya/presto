@@ -68,13 +68,17 @@ export type ImageBackground = {
   imgType: UploadImageType;
 };
 
+export type DefaultBackground = {
+  type: 'default';
+}
+
 export type Background = SolidColorBackground | GradientColorBackground | ImageBackground;
 
 export type Slide = {
   id: string;
   elements: Array<SlideElements>;
   fontFamily: FontFamily;
-  background?: Background;
+  background: DefaultBackground | Background;
 };
 
 export type Presentation = {

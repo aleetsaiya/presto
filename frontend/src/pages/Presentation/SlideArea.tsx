@@ -84,7 +84,7 @@ const SlideArea = ({
   };
 
   const getSlideBackground = (background: Slide['background']) => {
-    if (!background) {
+    if (background.type === 'default') {
       background = presentation.background;
     }
     if (background.type === 'image') {
