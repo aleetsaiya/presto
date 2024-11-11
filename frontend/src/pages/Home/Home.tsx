@@ -23,10 +23,18 @@ const Home = () => {
           Haven't logged in?
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
-          <Link to="/login" component={RouterLink}>
+          <Link
+            to="/login"
+            component={RouterLink}
+            sx={{ textDecoration: 'none' }}
+          >
             Login
           </Link>
-          <Link to="signup" component={RouterLink}>
+          <Link
+            to="signup"
+            component={RouterLink}
+            sx={{ textDecoration: 'none' }}
+          >
             Signup
           </Link>
         </Box>
