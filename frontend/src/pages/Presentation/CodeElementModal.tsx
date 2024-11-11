@@ -152,6 +152,7 @@ const CodeElementModal = ({
       try {
         await store.createSlideElement(id, slide.id, codeElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create code');
       }
@@ -178,6 +179,7 @@ const CodeElementModal = ({
       try {
         await store.updateSlideElement(id, slide.id, elementId, codeElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create code');
       }
@@ -297,7 +299,7 @@ const CodeElementModal = ({
           />
         </Box>
         <Button
-          type='submit'
+          type="submit"
           variant="contained"
           color="secondary"
           sx={{ mt: 3 }}

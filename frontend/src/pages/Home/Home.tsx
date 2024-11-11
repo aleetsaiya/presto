@@ -19,6 +19,7 @@ const Home = () => {
           Welcome to Presto!
         </Typography>
         <Typography variant="h6" textAlign="center" mt={2}>
+          {/* eslint-disable-next-line */}
           Haven't logged in?
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>

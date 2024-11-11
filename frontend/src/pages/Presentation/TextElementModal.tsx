@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
 import InputField from '../../components/InputField';
-import { Typography, Button, Box, useTheme } from '@mui/material';
+import { Typography, Button, Box } from '@mui/material';
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -20,7 +20,6 @@ const TextElementModal = ({
   onClose,
   elementId,
 }: TextElementModalProps) => {
-  const theme = useTheme();
   const store = useStore();
   const params = useParams();
   const id = params.id as string;
@@ -152,6 +151,7 @@ const TextElementModal = ({
       try {
         await store.createSlideElement(id, slide.id, textElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create new text');
       }
@@ -178,6 +178,7 @@ const TextElementModal = ({
       try {
         await store.updateSlideElement(id, slide.id, elementId, textElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create new text');
       }

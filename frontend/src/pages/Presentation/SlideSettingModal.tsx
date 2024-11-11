@@ -18,12 +18,7 @@ import {
 import { useStore } from '../../hooks/useStore';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import {
-  Background,
-  FontFamily,
-  Slide,
-  UploadImageType,
-} from '../../hooks/useStore.types';
+import { FontFamily, Slide, UploadImageType } from '../../hooks/useStore.types';
 import { fileToBase64 } from '../../utils';
 import ColorInputField from '../../components/ColorInputField';
 
@@ -120,6 +115,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
       const base64File = await fileToBase64(file);
       setImgBase64(base64File);
       toast.success('Upload successfully');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to upload image');
     }
@@ -132,8 +128,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
       background = {
         type: 'default',
       };
-    }
-    else if (slideBackgroundType === 'image') {
+    } else if (slideBackgroundType === 'image') {
       background = {
         type: 'image',
         img: imgBackgroundType === 'base64' ? imgBase64 : imgUrl,
@@ -159,6 +154,7 @@ const SlideSettingModal = ({ open, onClose }: SlideSettingProps) => {
     try {
       await store.updateSlide(id, slideIndex, newSlide);
       onClose();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to update slide');
     }

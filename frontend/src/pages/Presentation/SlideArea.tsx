@@ -100,6 +100,7 @@ const SlideArea = ({
     e.preventDefault();
     try {
       await store.deleteSlideElement(id, slides[slideIndex].id, elementId);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to delete element');
     }

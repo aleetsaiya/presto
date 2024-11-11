@@ -75,6 +75,7 @@ const Signup = () => {
       await auth.signup(name, email, password);
       navigate('/dashboard');
       toast.success('You have successfully signed up');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Email address has already been registered');
     }

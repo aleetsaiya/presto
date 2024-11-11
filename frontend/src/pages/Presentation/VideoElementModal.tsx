@@ -154,6 +154,7 @@ const VideoElementModal = ({
       try {
         await store.createSlideElement(id, slide.id, videoElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create video');
       }
@@ -180,6 +181,7 @@ const VideoElementModal = ({
       try {
         await store.updateSlideElement(id, slide.id, elementId, videoElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create video');
       }
@@ -294,7 +296,7 @@ const VideoElementModal = ({
           </FormControl>
         </Box>
         <Button
-          type='submit'
+          type="submit"
           variant="contained"
           color="secondary"
           sx={{ mt: 3 }}

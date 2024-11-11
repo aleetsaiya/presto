@@ -41,6 +41,7 @@ export const SlideControlbar = ({
   const handleCreateSlide = async () => {
     try {
       await store.createSlide(id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to create new slide');
     }
@@ -56,6 +57,7 @@ export const SlideControlbar = ({
       if (slideIndex !== 0) {
         navigate(`/presentations/${id}/${slideIndex - 1}`);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to delete current slide');
     }

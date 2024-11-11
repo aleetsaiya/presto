@@ -49,6 +49,7 @@ const Login = () => {
     try {
       await auth.login(email, password);
       navigate('/dashboard');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Invalid email or password');
     }
@@ -73,6 +74,7 @@ const Login = () => {
           Wekcome back!
         </Typography>
         <Typography variant="h5" component="p" fontWeight="bold">
+          {/* eslint-disable-next-line */}
           Let's get you signed in
         </Typography>
         <Paper

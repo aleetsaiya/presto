@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCallback } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UseLocalStorageReturn = [any, (value: any) => void];
 
 /**
@@ -9,6 +10,7 @@ type UseLocalStorageReturn = [any, (value: any) => void];
  */
 export function useLocalStorage(
   key: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue: any
 ): UseLocalStorageReturn {
   const [value, setValue] = useState(() => {
@@ -26,13 +28,17 @@ export function useLocalStorage(
   });
 
   /** Update localStorage and state value */
-  const updateValue = useCallback((value: any) => {
-    if (typeof value === 'function') {
-      throw new Error('Can not store function into local storage');
-    }
-    localStorage.setItem(key, JSON.stringify(value));
-    setValue(value);
-  }, [key]);
+  const updateValue = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (value: any) => {
+      if (typeof value === 'function') {
+        throw new Error('Can not store function into local storage');
+      }
+      localStorage.setItem(key, JSON.stringify(value));
+      setValue(value);
+    },
+    [key]
+  );
 
   return [value, updateValue];
 }

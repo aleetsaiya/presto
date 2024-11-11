@@ -90,6 +90,7 @@ const Sidebar = ({
       newPresentation.thumbnail = base64File;
       newPresentation.thumbnailType = 'base64';
       await store.updatePresentation(id, newPresentation);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to upload new thumbnail');
     }
@@ -193,7 +194,7 @@ const Sidebar = ({
           size="small"
           component="label"
           htmlFor="update-thumbnail"
-          onClick={() => { }}
+          onClick={() => {}}
         />
         <input
           id="update-thumbnail"

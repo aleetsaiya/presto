@@ -26,6 +26,7 @@ const DeletePresentationModal = ({
       await store.deletePresentation(id);
       onClose();
       navigate('/dashboard');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to delete presentation');
     }

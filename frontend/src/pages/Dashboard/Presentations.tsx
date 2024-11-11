@@ -71,4 +71,6 @@ const Presentations = forwardRef<Map<string, HTMLElement>, PresentationsProps>(
   }
 );
 
+Presentations.displayName = 'Presentations';
+
 export default Presentations;

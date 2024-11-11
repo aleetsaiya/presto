@@ -40,6 +40,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
       onClose();
       toast.success('Creates a new presentation successfully');
       setName('');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to create new presentation.');
     }
@@ -73,7 +74,7 @@ const NewPresentationModal = ({ open, onClose }: NewPresentationModalProps) => {
           autoComplete="off"
         />
         <Button
-          type='submit'
+          type="submit"
           variant="contained"
           color="secondary"
           sx={{ mt: 3 }}

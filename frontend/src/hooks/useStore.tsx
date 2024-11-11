@@ -47,8 +47,8 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         elements: [],
         fontFamily: 'Roboto',
         background: {
-          'type': 'default',
-        }
+          type: 'default',
+        },
       };
       const newStore = {
         ...store,
@@ -80,6 +80,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     async (id: string) => {
       // extract without target id
       setIsLoading(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [id]: _, ...newStore } = store;
       return setStoreApi(newStore)
         .then(() => {
@@ -123,7 +124,7 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
         fontFamily: 'Roboto',
         background: {
           type: 'default',
-        }
+        },
       };
       const newStore = {
         ...store,

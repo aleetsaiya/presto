@@ -108,6 +108,7 @@ const EditPresentationModal = ({
       const base64File = await fileToBase64(file);
       setImgBase64(base64File);
       toast.success('Upload successfully');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to upload image');
     }
@@ -153,6 +154,7 @@ const EditPresentationModal = ({
       newPresentation.background = background;
       await store.updatePresentation(id, newPresentation);
       onClose();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to edit presentation title');
     }
@@ -222,7 +224,9 @@ const EditPresentationModal = ({
             }}
           >
             <FormControl>
-              <FormLabel id="edit-presentation-setting-img-type">Image Type</FormLabel>
+              <FormLabel id="edit-presentation-setting-img-type">
+                Image Type
+              </FormLabel>
               <RadioGroup
                 row
                 name="row-radio-buttons-group"

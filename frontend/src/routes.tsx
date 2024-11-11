@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import AppContainer from './components/AppContainer';
 import ErrorPage from './pages/ErrorPage/ErrorPage';
 import Home from './pages/Home';
@@ -7,23 +7,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 import Presentation from './pages/Presentation';
-import { StoreProvider } from './hooks/useStore';
-import { useAuth } from './hooks/useAuth';
-
-type ProtectedRouteProps = {
-  children: React.ReactNode;
-};
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isLogin } = useAuth();
-
-  return isLogin() ? (
-    // Provide store context only after user login
-    <StoreProvider>{children}</StoreProvider>
-  ) : (
-    <Navigate to="/" />
-  );
-};
+import ProtectedRoute from './ProtectedRoute';
 
 export const router = createBrowserRouter([
   {

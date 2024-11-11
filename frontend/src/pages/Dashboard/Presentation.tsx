@@ -135,4 +135,6 @@ const Presentation = forwardRef<HTMLDivElement, PresentationProps>(
   }
 );
 
+Presentation.displayName = 'Presentation';
+
 export default memo(Presentation);

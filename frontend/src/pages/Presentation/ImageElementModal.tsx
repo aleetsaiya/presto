@@ -140,6 +140,7 @@ const ImageElementModal = ({
       setBase64(base64File);
       setCurrentImg(base64File);
       toast.success('Upload successfully');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error('Fail to upload new thumbnail');
     }
@@ -172,6 +173,7 @@ const ImageElementModal = ({
       try {
         await store.createSlideElement(id, slide.id, imgElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create image');
       }
@@ -198,6 +200,7 @@ const ImageElementModal = ({
       try {
         await store.updateSlideElement(id, slide.id, elementId, imgElement);
         onClose();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         toast.error('Fail to create image');
       }
