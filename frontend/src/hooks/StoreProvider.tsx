@@ -143,6 +143,178 @@ export const StoreProvider = ({ children }: StoreProviderProps) => {
     [store]
   );
 
+  const deleteSlide = useCallback(
+    async (presentationId: string, slideIndex: number) => {
+      setIsLoading(true);
+      const newStore = {
+        ...store,
+        [presentationId]: {
+          ...store[presentationId],
+          slides: store[presentationId].slides.filter(
+            (_, index) => index != slideIndex
+          ),
+        },
+      };
+      return setStoreApi(newStore)
+        .then(() => {
+          setStore(newStore);
+          return Promise.resolve();
+        })
+        .catch(() => {
+          return Promise.reject();
+        })
+        .finally(() => setIsLoading(false));
+    },
+    [store]
+  );
+
+  const updateSlide: StoreContextType['updateSlide'] = useCallback(
+    async (presentationId, slideIndex, slide) => {
+      setIsLoading(true);
+      const newSlides = [...store[presentationId].slides];
+      newSlides[slideIndex] = slide;
+      const newStore = {
+        ...store,
+        [presentationId]: {
+          ...store[presentationId],
+          slides: newSlides,
+        },
+      };
+      return setStoreApi(newStore)
+        .then(() => {
+          setStore(newStore);
+          return Promise.resolve();
+        })
+        .catch(() => {
+          return Promise.reject();
+        })
+        .finally(() => setIsLoading(false));
+    },
+    [store]
+  );
+
+  const createSlideElement: StoreContextType['createSlideElement'] =
+    useCallback(
+      async (presentationId, slideId, element) => {
+        setIsLoading(true);
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
+        const newElement = {
+          id: uuidv4(),
+          x: 0,
+          y: 0,
+          ...element,
+        };
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+          newElement,
+        ];
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          })
+          .finally(() => setIsLoading(false));
+      },
+      [store]
+    );
+
+  const deleteSlideElement: StoreContextType['deleteSlideElement'] =
+    useCallback(
+      async (presentationId: string, slideId: string, elementId: string) => {
+        setIsLoading(true);
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
+
+        const elementIndex = store[presentationId].slides[
+          slideIndex
+        ].elements.findIndex((ele) => ele.id === elementId);
+        if (elementIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
+
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+        ];
+        newSlideElements.splice(elementIndex, 1);
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          })
+          .finally(() => setIsLoading(false));
+      },
+      [store]
+    );
+
+  const updateSlideElement: StoreContextType['updateSlideElement'] =
+    useCallback(
+      async (presentationId, slideId, elementId, element) => {
+        setIsLoading(true);
+        const slideIndex = store[presentationId].slides.findIndex(
+          (slide) => slide.id === slideId
+        );
+        if (slideIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
+
+        const elementIndex = store[presentationId].slides[
+          slideIndex
+        ].elements.findIndex((ele) => ele.id === elementId);
+        if (elementIndex === -1) {
+          setIsLoading(false);
+          return Promise.reject();
+        }
+
+        const newSlideElements = [
+          ...store[presentationId].slides[slideIndex].elements,
+        ];
+        newSlideElements[elementIndex] = element;
+
+        const newStore = JSON.parse(JSON.stringify(store));
+        newStore[presentationId].slides[slideIndex].elements = newSlideElements;
+
+        return setStoreApi(newStore)
+          .then(() => {
+            setStore(newStore);
+            return Promise.resolve();
+          })
+          .catch(() => {
+            return Promise.reject();
+          })
+          .finally(() => setIsLoading(false));
+      },
+      [store]
+    );
+
+  const clearLocalStore = useCallback(async () => {
+    setStore({});
+  }, []);
+
   return (
     <StoreContext.Provider
       value={{
