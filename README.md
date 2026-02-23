@@ -32,27 +32,42 @@ A web-based presentation app that allows users to create, edit, and preview slid
 
 - Node.js (see `.nvmrc` for version)
 
-### Installation
+### Backend
+
+The frontend relies on a REST API backend (Express.js + JWT auth) for authentication and data persistence. Start the backend first:
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+The backend runs on `http://localhost:5005` by default. API docs are available at `http://localhost:5005` via Swagger UI.
+
+To reset the database:
+
+```bash
+npm run reset
+```
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
-```
-
-### Development
-
-```bash
 npm run dev
 ```
 
 ### Testing
 
 ```bash
+cd frontend
 npm run test
 ```
 
 ### Linting
 
 ```bash
+cd frontend
 npm run lint
 ```
